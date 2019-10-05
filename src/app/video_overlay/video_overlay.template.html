@@ -1,0 +1,7 @@
+<!-- This template is empty on purpose -->
+
+<div id="box" #box>
+    <mr-saturn *ngFor="let saturn of saturns; let i = index" [box]="box" (toDestroy)="destroy(i)" (click)="loop(5)"></mr-saturn>
+
+    <milk-man [active]="activeMilkMan"></milk-man>
+</div>

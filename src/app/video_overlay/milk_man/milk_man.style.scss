@@ -1,0 +1,42 @@
+.container {
+    position: absolute;
+    bottom: -30px;
+    right: -200px;
+
+    img {
+        display: block;
+        height: 200px;
+    }
+}
+
+.spin-in {
+    // animation: in 1s 1 linear;
+    transform:rotate(-45deg);
+    right: 20px;
+    transition: transform .5s, right .5s;
+}
+
+.spin-out {
+    // animation: out 1s 1 linear;
+    transform:rotate(0deg);
+    right: -200px;
+
+    transition: transform 1.5s, right 1s;
+}
+
+// @keyframes in {
+//     from {transform:rotate(0deg);}
+//     to {transform:rotate(-45deg);}
+// }
+
+// @keyframes in2 {
+//     from {transform:rotate(0deg);}
+//     to {transform:rotate(-45deg);}
+// }
+
+// @keyframes out {
+//     from {transform:rotate(-45deg);}
+//     to {transform:rotate(0deg);}
+// }
+
+
