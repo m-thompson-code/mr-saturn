@@ -1,7 +1,20 @@
-<!-- This template is empty on purpose -->
+<audio #mr_saturn_sfx_1>
+    <source src="assets/sfx/Mr Saturn/mr_saturn_1.mp3" type="audio/mpeg">
+<!-- Your browser does not support the audio element. -->
+</audio>
+<audio #mr_saturn_sfx_2>
+    <source src="assets/sfx/Mr Saturn/mr_saturn_2.mp3" type="audio/mpeg">
+<!-- Your browser does not support the audio element. -->
+</audio>
+<audio #mr_saturn_sfx_3>
+    <source src="assets/sfx/Mr Saturn/mr_saturn_3.mp3" type="audio/mpeg">
+<!-- Your browser does not support the audio element. -->
+</audio>
 
-<div id="box" #box>
-    <mr-saturn *ngFor="let saturn of saturns; let i = index" [box]="box" (toDestroy)="destroy(i)" (click)="loop(5)"></mr-saturn>
-
+<div id="box" [class]="dark ? 'dark-theme' : ''" #the_box>
     <milk-man [active]="activeMilkMan"></milk-man>
+
+    <moo-msg *ngFor="let msg of msgs" [msg]="msg" [box]="box" (destroyMsg)="removeMsg(msg)"></moo-msg>
+
+    <mr-saturn *ngFor="let saturn of saturns" [saturn]="saturn"></mr-saturn>
 </div>

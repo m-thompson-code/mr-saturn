@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Saturn Boing';
+    src: url('Saturn-Boing.woff2') format('woff2'),
+        url('Saturn-Boing.woff') format('woff'),
+        url('Saturn-Boing.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+

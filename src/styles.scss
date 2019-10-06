@@ -1,1 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Earthbound fonts source: https://earthboundcentral.com/2009/11/ultimate-earthbound-font-pack/
+@font-face {
+    font-family: 'Lumine Hall';
+    src: url('assets/fonts/Lumine-Hall/Lumine-Hall.woff2') format('woff2'),
+        url('assets/fonts/Lumine-Hall/Lumine-Hall.woff') format('woff'),
+        url('assets/fonts/Lumine-Hall/Lumine-Hall.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Saturn Boing';
+    src: url('assets/fonts/Saturn-Boing/Saturn-Boing.woff2') format('woff2'),
+        url('assets/fonts/Saturn-Boing/Saturn-Boing.woff') format('woff'),
+        url('assets/fonts/Saturn-Boing/Saturn-Boing.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: Roboto, sans-serif;
+    // font-family: Lumine Hall, Roboto, sans-serif;
+    // font-family: Roboto, sans-serif;
+    font-weight: 400;
+}
+
+.saturn-boing-font {
+    font-family: Saturn Boing, Roboto, sans-serif;
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.lumine-hall-font {
+    font-family: Lumine Hall, Roboto, sans-serif;
+    font-size: 100px;
+    font-weight: normal;
+}

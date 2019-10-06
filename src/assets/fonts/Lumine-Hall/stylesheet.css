@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Lumine Hall';
+    src: url('Lumine-Hall.woff2') format('woff2'),
+        url('Lumine-Hall.woff') format('woff'),
+        url('Lumine-Hall.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+

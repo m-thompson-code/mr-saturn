@@ -1,0 +1,23 @@
+.container {
+    position: absolute;
+    display: flex;
+
+    width: 42px;
+    height: 42px;
+
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    opacity: 1;
+}
+
+.fade {
+    transition: opacity 1s;
+    opacity: 0;
+}
+
+.text {
+    white-space: pre;
+}
+
