@@ -1,16 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import * as firebase from 'firebase/app';
 
 interface TwitchCommand {
     msg: string;
     milkMan: boolean;
 }
-
-// export interface Saturn {
-//     moving: boolean;
-//     x: number;
-//     y: number;
-// }
 
 const GRAVITY = 0.1;
 
@@ -44,11 +38,11 @@ export class Saturn {
         const width = (this.maxWidth * 3 + this.maxWidth * 7 * Math.random()) / 10;
         const height = (this.maxHeight * 5 + this.maxHeight * 5 * Math.random()) / 10;
 
-        // Min test
+        // // Min test
         // const width = this.maxWidth * 3 / 10;
         // const height = this.maxHeight * 5 / 10;
 
-        // Max test
+        // // Max test
         // const width = this.maxWidth;
         // const height = this.maxHeight;
 
@@ -123,9 +117,10 @@ export interface Settings {
     playSounds: boolean;
     limitSounds: boolean;
     motivationMinutes: number;
-    motivateAt: number;
-    motivateFinishedAt: number;
+    additionalSaturns: number;
     loopCount: number;
+
+    motivateAt: number;
 }
 
 @Component({
@@ -133,22 +128,22 @@ export interface Settings {
     templateUrl: './video_overlay.template.html',
     styleUrls: ['./video_overlay.style.scss']
 })
-export class VideoOverlayComponent {
+export class VideoOverlayComponent implements OnInit, AfterViewInit {
     player1: HTMLAudioElement;
     player2: HTMLAudioElement;
     player3: HTMLAudioElement;
 
-    @ViewChild('mr_saturn_sfx_1') set playerRef1(ref: ElementRef<HTMLAudioElement>) {
+    @ViewChild('mr_saturn_sfx_1', {static: false}) set playerRef1(ref: ElementRef<HTMLAudioElement>) {
         if (ref && ref.nativeElement) {
             this.player1 = ref.nativeElement;
         }
     }
-    @ViewChild('mr_saturn_sfx_2') set playerRef2(ref: ElementRef<HTMLAudioElement>) {
+    @ViewChild('mr_saturn_sfx_2', {static: false}) set playerRef2(ref: ElementRef<HTMLAudioElement>) {
         if (ref && ref.nativeElement) {
             this.player2 = ref.nativeElement;
         }
     }
-    @ViewChild('mr_saturn_sfx_') set playerRef3(ref: ElementRef<HTMLAudioElement>) {
+    @ViewChild('mr_saturn_sfx_', {static: false}) set playerRef3(ref: ElementRef<HTMLAudioElement>) {
         if (ref && ref.nativeElement) {
             this.player3 = ref.nativeElement;
         }
@@ -162,7 +157,7 @@ export class VideoOverlayComponent {
 
     box: HTMLDivElement;
 
-    @ViewChild('the_box') set boxRef(ref: ElementRef<HTMLDivElement>) {
+    @ViewChild('the_box', {static: false}) set boxRef(ref: ElementRef<HTMLDivElement>) {
         this.box = ref.nativeElement;
     }
 
@@ -187,14 +182,9 @@ export class VideoOverlayComponent {
         }catch(error) {
             console.error(error);
         }
-        
 
         this.saturns = [];
         this.msgs = [];
-
-        this.createSaturn('BOING!');
-        this.createSaturn('BOING!');
-        this.createSaturn('BOING!');
 
         this.settings = {
             font: 'normal',
@@ -203,11 +193,13 @@ export class VideoOverlayComponent {
             playSounds: false,
             limitSounds: true,
             motivationMinutes: 0,
-            motivateAt: null,
-            motivateFinishedAt: null,
-            loopCount: 0
+            additionalSaturns: 0,
+            loopCount: 0,
+            motivateAt: null
         }
+    }
 
+    initListeners() {
         firebase.firestore().collection("saturns").doc('settings').onSnapshot(docSnapshot => {
             const doc = docSnapshot.data() as Settings;
 
@@ -219,9 +211,9 @@ export class VideoOverlayComponent {
                     playSounds: doc.playSounds || false,
                     limitSounds: doc.limitSounds || false,
                     motivationMinutes: doc.motivationMinutes || 0,
+                    additionalSaturns: doc.additionalSaturns || 0,
+                    loopCount: doc.loopCount || 0,
                     motivateAt: doc.motivateAt || 0,
-                    motivateFinishedAt: doc.motivateFinishedAt || 0,
-                    loopCount: doc.loopCount || 0
                 }
 
                 if (doc.loopCount) {
@@ -302,11 +294,21 @@ export class VideoOverlayComponent {
             }
 
             this.createSaturn(msg);
+
+            if (this.settings.additionalSaturns) {
+                for (let i = 0; i < this.settings.additionalSaturns; i++) {
+                    this.createSaturn();
+                }
+            }
         });
     }
 
-    checkMotivationAt() {
-        // TODO:
+    ngAfterViewInit() {
+        this.initListeners();
+
+        this.createSaturn('BOING!');
+        this.createSaturn('BOING!');
+        this.createSaturn('BOING!');
     }
 
     activateMilkMan() {

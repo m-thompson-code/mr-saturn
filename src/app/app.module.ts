@@ -6,8 +6,16 @@ import { AppComponent } from './app.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { MatCardModule } from '@angular/material/card';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { VideoOverlayComponent } from './video_overlay/video_overlay.component';
 import { ConfigComponent } from './config/config.component';
@@ -51,7 +59,14 @@ firebase.initializeApp(firebaseConfig);
     AppRoutingModule,
     BrowserAnimationsModule,
 
-    MatCheckboxModule
+    MatCardModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatSliderModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

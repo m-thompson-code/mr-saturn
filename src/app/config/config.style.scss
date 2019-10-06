@@ -1,3 +1,54 @@
-div {
-    color: grey;
+.section {
+    display: flex;
+    align-content: center;
+    align-items: center;
+
+    min-height: 60px;
+}
+
+.h2 {
+    margin: 10px;
+}
+
+.font-radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+}
+
+.font-radio-button {
+    margin: 5px;
+}
+
+.volume-checkboxes {
+    mat-checkbox {
+        margin-right: 24px;
+    }
+}
+.volume-slider {
+    display: flex;
+    align-items: center;
+
+    span {
+        margin-right: 24px;
+    }
+
+    mat-slider {
+        flex-grow: 2;
+    }
+}
+
+.input {
+    flex-grow: 2;
+}
+
+.loader {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
 }

@@ -24,6 +24,9 @@ body {
     // font-family: Lumine Hall, Roboto, sans-serif;
     // font-family: Roboto, sans-serif;
     font-weight: 400;
+
+    margin: 0;
+    padding: 0;
 }
 
 .saturn-boing-font {
@@ -40,3 +43,30 @@ body {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+// Taken from Angular Material's examples
+.basic-container {
+    padding: 30px;
+    min-height: calc(100vh - 60px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mat-app-background {
+    background-color: #fafafa;
+    color: rgba(0,0,0,.87);
+}
+
+.snack-bar-error {
+    background: #f44336;
+    
+    .mat-simple-snackbar {
+        background: #f44336;
+        .mat-simple-snackbar-action {
+            color: white;
+        }
+    }
+}
+

@@ -1,19 +1,86 @@
-<!-- This template is empty on purpose -->
+<div class="mat-app-background basic-container">
+    <form (submit)="$event.preventDefault()">
+        <mat-card *ngIf="settings">
+            <mat-card-content>
+                <h2 class="h2">Settings</h2>
+                <section>
+                    <label id="font">Font</label>
+    
+                    <mat-radio-group
+                        aria-labelledby="font"
+                        class="font-radio-group"
+                        [value]="fontOption"
+                        (change)="updateFont($event)">
+                        <mat-radio-button class="font-radio-button" *ngFor="let fontOption of fontOptions" [value]="fontOption">
+                        {{ fontOption }}
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </section>
+    
+                <section class="section">
+                    <mat-checkbox [checked]="settings.allowMsgsFromChat" (change)="updateAllowMsgsFromChat($event)">
+                        Allow messages directly from chat to pop up on overlay (40 char limit)
+                    </mat-checkbox>
+                </section>
+    
+                <section class="section">
+                    <div class="volume-checkboxes">
+                        <mat-checkbox [checked]="settings.playSounds" (change)="updatePlaySounds($event)">
+                            Play Mr. Saturn sounds
+                        </mat-checkbox>
+    
+                        <mat-checkbox [checked]="settings.limitSounds" (change)="updateLimitSounds($event)">
+                            Limit sounds (Will prevent sounds from happening too frequently)
+                        </mat-checkbox>
+                    </div>
+                </section>
 
-<div>
-    hello config
-    font: TODO
-    <div>
-        <mat-checkbox [checked]="settings.allowMsgsFromChat" (change)="updateAllowMsgsFromChat($event))" [value]="Allow messages directly from chat to pop up on overlay (40 char limit)"></mat-checkbox>
-    </div>
+                <section>
+                    <div class="volume-slider">
+                        <span>
+                            Volume:
+                        </span>
+    
+                        <mat-slider
+                            [max]="10"
+                            [min]="0"
+                            [thumbLabel]="true"
+                            [step]="0.1"
+                            [value]="volumeStepperValue"
+                            (change)="updateVolume($event)">
+                        </mat-slider>
+                    </div>
+                </section>
+    
+                <section class="section">
+                    <mat-form-field class="input">
+                        <input matInput type="number" placeholder="Minutes between motivation rallies (set to 0 to disable this feature)" [value]="motivationMinutesInputValue || 0" (change)="setMotivationMinutes($event)">
+                    </mat-form-field>
+                </section>
+
+                <section class="section">
+                        <mat-form-field class="input">
+                            <input matInput type="number" placeholder="Additional Mr. Saturns per chat message" [value]="additionalSaturnsInputValue || 0" (change)="setAdditionalSaturns($event)">
+                        </mat-form-field>
+                    </section>
+
+                <section class="section">
+                    <mat-form-field class="input">
+                        <input matInput type="number" placeholder="Endless loop (This is keep at least this many Mr. Saturns on the screen)" [value]="loopCountInputValue || 0" (change)="setLoopCount($event)">
+                    </mat-form-field>
+                </section>
+            </mat-card-content>
+
+            <section>
+                <button (click)="save()" mat-raised-button color="primary" [disabled]="saving">Save</button>
+            </section>
+        </mat-card>
+    
+        <div class="loader" *ngIf="!settings || saving">
+            <mat-progress-spinner
+                class="example-margin"
+                mode="indeterminate">
+            </mat-progress-spinner>
+        </div>
+    </form>
 </div>
-
-font: doc.font || 'normal',
-allowMsgsFromChat: doc.allowMsgsFromChat || false,
-volume: doc.volume || 0,
-playSounds: doc.playSounds || false,
-limitSounds: doc.limitSounds || false,
-motivationMinutes: doc.motivationMinutes || 0,
-motivateAt: doc.motivateAt || 0,
-motivateFinishedAt: doc.motivateFinishedAt || 0,
-loopCount: doc.loopCount || 0
