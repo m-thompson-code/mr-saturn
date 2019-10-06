@@ -1,5 +1,19 @@
 <!-- This template is empty on purpose -->
 
 <div>
-    hello video overlay
+    hello config
+    font: TODO
+    <div>
+        <mat-checkbox [checked]="settings.allowMsgsFromChat" (change)="updateAllowMsgsFromChat($event))" [value]="Allow messages directly from chat to pop up on overlay (40 char limit)"></mat-checkbox>
+    </div>
 </div>
+
+font: doc.font || 'normal',
+allowMsgsFromChat: doc.allowMsgsFromChat || false,
+volume: doc.volume || 0,
+playSounds: doc.playSounds || false,
+limitSounds: doc.limitSounds || false,
+motivationMinutes: doc.motivationMinutes || 0,
+motivateAt: doc.motivateAt || 0,
+motivateFinishedAt: doc.motivateFinishedAt || 0,
+loopCount: doc.loopCount || 0

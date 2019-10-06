@@ -4,6 +4,11 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
+
 import { VideoOverlayComponent } from './video_overlay/video_overlay.component';
 import { ConfigComponent } from './config/config.component';
 
@@ -16,7 +21,6 @@ import * as firebase from 'firebase/app';
 import "firebase/firestore";
 
 // Initialize Firebase
-// Your web app's Firebase configuration
 var firebaseConfig = {
   apiKey: "AIzaSyDkY3b-5WGgLcEPK7s9L65if7-svTW2was",
   authDomain: "mr-saturn.firebaseapp.com",
@@ -27,7 +31,7 @@ var firebaseConfig = {
   appId: "1:847893261051:web:8b5d67c34a840976cc5e5e",
   measurementId: "G-282RBMWF9D"
 };
-// Initialize Firebase
+
 firebase.initializeApp(firebaseConfig);
 // firebase.analytics();
 
@@ -44,7 +48,10 @@ firebase.initializeApp(firebaseConfig);
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+
+    MatCheckboxModule
   ],
   providers: [],
   bootstrap: [AppComponent]

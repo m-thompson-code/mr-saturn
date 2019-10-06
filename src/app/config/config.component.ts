@@ -10,4 +10,8 @@ export class ConfigComponent {
 
     constructor() { 
     }
+
+    // updateAllowMsgsFromChat(event: MatCheckboxChange) {
+
+    // }
 }
