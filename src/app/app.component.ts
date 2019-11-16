@@ -7,4 +7,13 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'mr-saturn';
+  constructor() {
+    (window as any).dark = () => {
+      if (localStorage.getItem('dark')) {
+        localStorage.setItem('dark', 'true');
+      } else {
+        localStorage.setItem('dark', '');
+      }
+    }
+  }
 }

@@ -23,6 +23,9 @@ import { ConfigComponent } from './config/config.component';
 import { MrSaturnComponent } from './video_overlay/mr_saturn/mr_saturn.component';
 import { MsgComponent } from './video_overlay/msg/msg.component';
 import { MilkManComponent } from './video_overlay/milk_man/milk_man.component';
+import { MonaLisaComponent } from './video_overlay/mona_lisa/mona_lisa.component';
+import { OlivesComponent } from './video_overlay/olives/olives.component';
+import { OliveComponent } from './video_overlay/olives/olive/olive.component';
 
 import * as firebase from 'firebase/app';
 
@@ -52,7 +55,10 @@ firebase.initializeApp(firebaseConfig);
 
     MrSaturnComponent,
     MsgComponent,
-    MilkManComponent
+    MilkManComponent,
+    MonaLisaComponent,
+    OlivesComponent,
+    OliveComponent
   ],
   imports: [
     BrowserModule,

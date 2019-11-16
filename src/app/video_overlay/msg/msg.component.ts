@@ -43,7 +43,7 @@ export class MsgComponent implements AfterViewInit, OnInit {
             setTimeout(() => {
                 this.destroy();
             }, 1000);
-        }, 1000);
+        }, 1700);
     }
 
     ngAfterViewInit() {

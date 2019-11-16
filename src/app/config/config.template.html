@@ -4,7 +4,7 @@
             <mat-card-content>
                 <h2 class="h2">Settings</h2>
                 <section>
-                    <label id="font">Font</label>
+                    <label id="font">Font used for pop up messages</label>
     
                     <mat-radio-group
                         aria-labelledby="font"
@@ -24,7 +24,7 @@
                 </section>
     
                 <section class="section">
-                    <div class="volume-checkboxes">
+                    <div class="checkboxes">
                         <mat-checkbox [checked]="settings.playSounds" (change)="updatePlaySounds($event)">
                             Play Mr. Saturn sounds
                         </mat-checkbox>
@@ -59,6 +59,12 @@
                 </section>
 
                 <section class="section">
+                    <mat-form-field class="input">
+                        <input matInput type="number" placeholder="Duration (in seconds) for motivation rallies (set to 0 to disable this feature)" [value]="motivationDurationInputValue || 0" (change)="setMotivationDuration($event)">
+                    </mat-form-field>
+                </section>
+
+                <section class="section">
                         <mat-form-field class="input">
                             <input matInput type="number" placeholder="Additional Mr. Saturns per chat message" [value]="additionalSaturnsInputValue || 0" (change)="setAdditionalSaturns($event)">
                         </mat-form-field>
@@ -69,6 +75,22 @@
                         <input matInput type="number" placeholder="Endless loop (This is keep at least this many Mr. Saturns on the screen)" [value]="loopCountInputValue || 0" (change)="setLoopCount($event)">
                     </mat-form-field>
                 </section>
+
+                <section class="section">
+                        <div class="checkboxes">
+                            <mat-checkbox [checked]="settings.allowMilkman" (change)="updateAllowMilkman($event)">
+                                Allow Milkman popup
+                            </mat-checkbox>
+        
+                            <mat-checkbox [checked]="settings.allowMonaLisa" (change)="updateMonaLisa($event)">
+                                Allow Mona Lisa facehugger popup
+                            </mat-checkbox>
+                            
+                            <mat-checkbox [checked]="settings.allowOlives" (change)="updateAllowOlives($event)">
+                                Allow olive popups
+                            </mat-checkbox>
+                        </div>
+                    </section>
             </mat-card-content>
 
             <section>

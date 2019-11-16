@@ -1,0 +1,85 @@
+.olive {
+    position: absolute;
+    bottom: 0;
+    transition: bottom .5s;
+
+    img {
+        display: block;
+        width: 32px;
+        // height: 26px;
+    }
+}
+
+
+.init {
+    bottom: -20px !important;
+}
+
+// .spin-in {
+//     transform:rotate(-30deg);
+//     right: 0px;
+//     transition: transform .5s, right .5s;
+// }
+
+// .hide {
+//     bottom: -250px;
+// }
+
+// .peak {
+//     bottom: -140px;
+//     animation: peak .6s infinite alternate;
+// }
+
+// .right {
+//     right: calc(50vw - 133.4px / 2 - 150px);
+//     animation: right .5s infinite alternate;
+//     bottom: -30px;
+//     img {
+//         transform: scaleX(-1);
+//     }
+// }
+
+// .left {
+//     right: calc(50vw - 133.4px / 2 + 150px);
+//     animation: left .5s infinite alternate;
+//     bottom: -30px;
+// }
+
+// .left.height1 {
+//     bottom: -30px;
+// }
+
+// .left.height2 {
+//     bottom: -70px;
+// }
+
+// .left.height3 {
+//     bottom: -100px;
+// }
+
+// .right.height1 {
+//     bottom: -30px;
+// }
+
+// .right.height2 {
+//     bottom: -70px;
+// }
+
+// .right.height3 {
+//     bottom: -100px;
+// }
+
+// @keyframes peak {
+//     from {transform:rotate(-2deg);}
+//     to {transform:rotate(2deg);}
+// }
+
+// @keyframes left {
+//     from {transform:rotate(0deg);}
+//     to {transform:rotate(10deg);}
+// }
+
+// @keyframes right {
+//     from {transform:rotate(0deg);}
+//     to {transform:rotate(-10deg);}
+// }

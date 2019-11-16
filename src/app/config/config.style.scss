@@ -1,13 +1,13 @@
+mat-card {
+    padding: 32px;
+}
+
 .section {
     display: flex;
     align-content: center;
     align-items: center;
 
     min-height: 60px;
-}
-
-.h2 {
-    margin: 10px;
 }
 
 .font-radio-group {
@@ -20,11 +20,12 @@
     margin: 5px;
 }
 
-.volume-checkboxes {
+.checkboxes {
     mat-checkbox {
         margin-right: 24px;
     }
 }
+
 .volume-slider {
     display: flex;
     align-items: center;

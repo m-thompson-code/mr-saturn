@@ -10,10 +10,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export interface FormSettings {
     font: 'random' | 'normal' | 'boing' | 'lumine hall';
     allowMsgsFromChat: boolean;
+    allowMilkman: boolean;
+    allowMonaLisa: boolean;
+    allowOlives: boolean;
     volume: number;
     playSounds: boolean;
     limitSounds: boolean;
     motivationMinutes: number;
+    motivationDuration: number;
     additionalSaturns: number;
     loopCount: number;
 }
@@ -34,6 +38,7 @@ export class ConfigComponent implements OnInit {
     fontOption: FontOption;
 
     motivationMinutesInputValue: string;
+    motivationDurationInputValue: string;
     additionalSaturnsValue: string;
     loopCountInputValue: string;
 
@@ -50,10 +55,14 @@ export class ConfigComponent implements OnInit {
             this.settings = {
                 font: doc.font || 'normal',
                 allowMsgsFromChat: doc.allowMsgsFromChat || false,
+                allowMilkman: doc.allowMilkman || false,
+                allowMonaLisa: doc.allowMonaLisa || false,
+                allowOlives: doc.allowOlives || false,
                 volume: doc.volume || 0,
                 playSounds: doc.playSounds || false,
                 limitSounds: doc.limitSounds || false,
                 motivationMinutes: doc.motivationMinutes || 0,
+                motivationDuration: doc.motivationDuration || 0,
                 additionalSaturns: doc.additionalSaturns || 0,
                 loopCount: doc.loopCount || 0
             }
@@ -71,6 +80,7 @@ export class ConfigComponent implements OnInit {
             this.volumeStepperValue = (this.settings.volume || 0) * 10;
 
             this.motivationMinutesInputValue = "" + (this.settings.motivationMinutes || 0);
+            this.motivationDurationInputValue = "" + (this.settings.motivationDuration || 0);
 
             this.loopCountInputValue = "" + (this.settings.loopCount || 0);
         });
@@ -129,6 +139,17 @@ export class ConfigComponent implements OnInit {
         }
     }
 
+    setMotivationDuration(event: any) {
+        console.log(event.target.value);
+        this.motivationDurationInputValue = event.target.value;
+
+        const num = +event.target.value;
+
+        if (!isNaN(num)) {
+            this.settings.motivationDuration = Math.floor(num);
+        }
+    }
+
     setAdditionalSaturns(event: any) {
         console.log(event.target.value);
         this.additionalSaturnsValue = event.target.value;
@@ -149,6 +170,22 @@ export class ConfigComponent implements OnInit {
         if (!isNaN(num)) {
             this.settings.loopCount = Math.floor(num);
         }
+    }
+
+    updateAllowMilkman(event: MatCheckboxChange) {
+        console.log(event);
+
+        this.settings.allowMilkman = !!event.checked;
+    }
+    updateMonaLisa(event: MatCheckboxChange) {
+        console.log(event);
+
+        this.settings.allowMonaLisa = !!event.checked;
+    }
+    updateAllowOlives(event: MatCheckboxChange) {
+        console.log(event);
+
+        this.settings.allowOlives = !!event.checked;
     }
 
     save() {

@@ -1,20 +1,38 @@
 <audio #mr_saturn_sfx_1>
     <source src="assets/sfx/Mr Saturn/mr_saturn_1.mp3" type="audio/mpeg">
-<!-- Your browser does not support the audio element. -->
 </audio>
 <audio #mr_saturn_sfx_2>
     <source src="assets/sfx/Mr Saturn/mr_saturn_2.mp3" type="audio/mpeg">
-<!-- Your browser does not support the audio element. -->
 </audio>
 <audio #mr_saturn_sfx_3>
     <source src="assets/sfx/Mr Saturn/mr_saturn_3.mp3" type="audio/mpeg">
-<!-- Your browser does not support the audio element. -->
+</audio>
+<audio #cheer>
+    <source src="assets/sfx/kids_cheering.mp3" type="audio/mpeg">
 </audio>
 
 <div id="box" [class]="dark ? 'dark-theme' : ''" #the_box>
+    <div *ngIf="showInput">
+        <div class="mat-app-background basic-container">
+            <form (submit)="$event.preventDefault()">
+                <mat-form-field class="input">
+                    <input matInput type="number" placeholder="Duration (in seconds) for motivation rallies (set to 0 to disable this feature)" [value]="motivationDurationInputValue || 0" (change)="setMotivationDuration($event)">
+                </mat-form-field>
+            </form>
+        </div>
+    </div>
+    
     <milk-man [active]="activeMilkMan"></milk-man>
+    <mona-lisa #monaLisa></mona-lisa>
+
+    <olives #olives [maxWidth]="the_box.offsetWidth" [maxHeight]="the_box.offsetHeight"></olives>
+
 
     <moo-msg *ngFor="let msg of msgs" [msg]="msg" [box]="box" (destroyMsg)="removeMsg(msg)"></moo-msg>
 
     <mr-saturn *ngFor="let saturn of saturns" [saturn]="saturn"></mr-saturn>
+
+    <div *ngIf="maxMotivatingSaturns" [class]="'highscore ' + (activeHighscore ? 'active' : '')">
+        <span class="saturn-boing-font">NEW HIGHSCORE! {{ maxMotivatingSaturns }}</span>
+    </div>
 </div>

@@ -1,9 +1,14 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import * as firebase from 'firebase/app';
+import { MonaLisaComponent } from './mona_lisa/mona_lisa.component';
+import { OlivesComponent } from './olives/olives.component';
 
 interface TwitchCommand {
     msg: string;
     milkMan: boolean;
+    monaLisa: boolean;
+    'display-name': string;
+    username: string;
 }
 
 const GRAVITY = 0.1;
@@ -113,14 +118,20 @@ export interface Msg {
 export interface Settings {
     font: 'random' | 'normal' | 'boing' | 'lumine hall';
     allowMsgsFromChat: boolean;
+    allowMilkman: boolean;
+    allowMonaLisa: boolean;
+    allowOlives: boolean;
     volume: number;
     playSounds: boolean;
     limitSounds: boolean;
     motivationMinutes: number;
+    motivationDuration: number;
     additionalSaturns: number;
     loopCount: number;
 
     motivateAt: number;
+
+    maxMotivatingSaturns?: number;
 }
 
 @Component({
@@ -132,6 +143,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
     player1: HTMLAudioElement;
     player2: HTMLAudioElement;
     player3: HTMLAudioElement;
+    cheer: HTMLAudioElement;
 
     @ViewChild('mr_saturn_sfx_1', {static: false}) set playerRef1(ref: ElementRef<HTMLAudioElement>) {
         if (ref && ref.nativeElement) {
@@ -143,11 +155,19 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
             this.player2 = ref.nativeElement;
         }
     }
-    @ViewChild('mr_saturn_sfx_', {static: false}) set playerRef3(ref: ElementRef<HTMLAudioElement>) {
+    @ViewChild('mr_saturn_sfx_3', {static: false}) set playerRef3(ref: ElementRef<HTMLAudioElement>) {
         if (ref && ref.nativeElement) {
             this.player3 = ref.nativeElement;
         }
     }
+    @ViewChild('cheer', {static: false}) set cheerRef(ref: ElementRef<HTMLAudioElement>) {
+        if (ref && ref.nativeElement) {
+            this.cheer = ref.nativeElement;
+        }
+    }
+
+    @ViewChild('monaLisa', {static: false}) monaLisa: MonaLisaComponent;
+    @ViewChild('olives', {static: false}) olives: OlivesComponent;
 
     lastSoundSeed: number = 0;
 
@@ -170,6 +190,14 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
     activeMilkMan: boolean = false;
 
     dark: boolean;
+    showInput: boolean;
+
+    maxMotivatingSaturns: number;
+
+    activeHighscore: boolean;
+    activeHighscoreTimeout: any;//NodeJS.Timer;
+
+
 
     constructor() {
     }
@@ -189,10 +217,14 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
         this.settings = {
             font: 'normal',
             allowMsgsFromChat: false,
+            allowMilkman: false,
+            allowMonaLisa: false,
+            allowOlives: false,
             volume: 0,
             playSounds: false,
             limitSounds: true,
             motivationMinutes: 0,
+            motivationDuration: 0,
             additionalSaturns: 0,
             loopCount: 0,
             motivateAt: null
@@ -207,10 +239,14 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                 this.settings = {
                     font: doc.font || 'normal',
                     allowMsgsFromChat: doc.allowMsgsFromChat || false,
+                    allowMilkman: doc.allowMilkman || false,
+                    allowMonaLisa: doc.allowMonaLisa || false,
+                    allowOlives: doc.allowOlives || false,
                     volume: doc.volume || 0,
                     playSounds: doc.playSounds || false,
                     limitSounds: doc.limitSounds || false,
                     motivationMinutes: doc.motivationMinutes || 0,
+                    motivationDuration: doc.motivationDuration || 0,
                     additionalSaturns: doc.additionalSaturns || 0,
                     loopCount: doc.loopCount || 0,
                     motivateAt: doc.motivateAt || 0,
@@ -221,6 +257,17 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                         this.createSaturns(doc.loopCount - this.saturns.length);
                     }
                 }
+
+                if (doc.maxMotivatingSaturns > this.maxMotivatingSaturns) {
+                    this.activateHighscore();
+                }
+
+                this.maxMotivatingSaturns = doc.maxMotivatingSaturns;
+
+                if (!doc.allowOlives) { 
+                    this.olives.clearOlives();
+                }
+
             }
         });
 
@@ -236,8 +283,19 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
 
             console.log("Current data: ", docSnapshot.data());
 
-            if (doc.milkMan) {
+            if (this.settings.allowMilkman && doc.milkMan) {
                 this.activateMilkMan();
+            }
+
+            if (this.settings.allowMonaLisa && doc.monaLisa) {
+                this.activateMonaLisa();
+            }
+
+            if (doc.username.toLowerCase() === 'streamlabs') {
+                if (doc.msg.indexOf('raided') !== -1 || doc.msg.indexOf('cheer') !== -1 || doc.msg.indexOf('following') !== -1 || doc.msg.indexOf('hosted') !== -1 || doc.msg.indexOf('subscribed') !== -1) {
+                    this.createSaturns(15);
+                }
+                return;
             }
 
             let msg = '';
@@ -250,6 +308,16 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                 if (!doc.milkMan && this.settings.allowMsgsFromChat && doc.msg.length < 40) {
                     msg = doc.msg;
                 }
+
+                if (this.settings.allowOlives) {
+                    console.log("allowed olives");
+
+                    const lowerCaseMsg = doc.msg.toLowerCase();
+                    console.log(lowerCaseMsg);
+
+                    const oliveCount = lowerCaseMsg.split('olive').length - 1;
+                    this.olives.pushOlives(oliveCount);
+                }
             }
 
             const now = Date.now();
@@ -257,7 +325,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
             if (this.settings.motivationMinutes) {
                 const motivateAt = this.settings.motivateAt || 0;
 
-                if (now > motivateAt + 1000 * 20) {
+                if (now > motivateAt + 1000 * this.settings.motivationDuration) {
                     console.log("too late for motivateAt", now - motivateAt);
                 } else {
                     console.log();
@@ -307,8 +375,20 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
         this.initListeners();
 
         this.createSaturn('BOING!');
-        this.createSaturn('BOING!');
-        this.createSaturn('BOING!');
+        this.createSaturn();
+        this.createSaturn();
+    }
+
+    activateHighscore() {
+        this.playCheer();
+
+        clearTimeout(this.activeHighscoreTimeout);
+        
+        this.activeHighscore = true;
+
+        this.activeHighscoreTimeout = setTimeout(() => {
+            this.activeHighscore = false;
+        }, 5000);
     }
 
     activateMilkMan() {
@@ -318,7 +398,11 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
 
         this.milkManTimeout = setTimeout(() => {
             this.activeMilkMan = false;
-        }, 2000);
+        }, 2600);
+    }
+
+    activateMonaLisa() {
+        this.monaLisa.activate();
     }
 
     playSound() {
@@ -363,6 +447,20 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
         }
     }
 
+    playCheer() {
+        if (!this.settings.playSounds) {
+            return;
+        }
+
+        if (this.cheer) {
+            this.cheer.volume = this.settings.volume / 2;
+
+            return this.cheer.play().catch(error => {
+                console.error(error);
+            });
+        }
+    }
+
     removeSaturn(removeSaturn: Saturn) {
         for (let i = 0; i <this.saturns.length; i++) {
             const saturn = this.saturns[i];
@@ -383,8 +481,8 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
     createSaturn(msgText?: string) {
         console.log(msgText);
         
-        const maxHeight = (this.box && this.box && this.box.offsetHeight || 100) - 40;// 40 pixels for the size of the sprite
-        const maxWidth = this.box && this.box && this.box.offsetWidth || 100;
+        const maxHeight = (this.box && this.box.offsetHeight || 100) - 40;// 40 pixels for the size of the sprite
+        const maxWidth = this.box && this.box.offsetWidth || 100;
 
         const onDestroy = (saturn: Saturn) => {
             this.removeSaturn(saturn);

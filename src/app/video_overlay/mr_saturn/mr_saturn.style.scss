@@ -8,10 +8,26 @@
     align-items: center;
     justify-content: center;
 
-    animation: spin 3s infinite linear;
-
     img {
         display: block;
+    }
+}
+
+.container.flipX {
+    img {
+        transform: scaleX(-1);
+    }
+}
+
+.container.flipY {
+    img {
+        transform: scaleY(-1);
+    }
+}
+
+.container.flipX.flipY {
+    img {
+        transform: scaleX(-1) scaleY(-1);
     }
 }
 
@@ -19,7 +35,198 @@
     display: none;
 }
 
-@keyframes spin {
+
+.spin0 {
+    animation: spin0 4s infinite linear;
+}
+@keyframes spin0 {
     from {transform:rotate(0deg);}
     to {transform:rotate(360deg);}
+}
+
+.spin15 {
+    animation: spin15 4s infinite linear;
+}
+@keyframes spin15 {
+    from {transform:rotate(-15deg);}
+    to {transform:rotate(345deg);}
+}
+
+.spin30 {
+    animation: spin30 4s infinite linear;
+}
+@keyframes spin30 {
+    from {transform:rotate(-30deg);}
+    to {transform:rotate(330deg);}
+}
+
+.spin45 {
+    animation: spin45 4s infinite linear;
+}
+@keyframes spin45 {
+    from {transform:rotate(-45deg);}
+    to {transform:rotate(315deg);}
+}
+
+.spin60 {
+    animation: spin60 4s infinite linear;
+}
+@keyframes spin60 {
+    from {transform:rotate(-60deg);}
+    to {transform:rotate(300deg);}
+}
+
+.spin75 {
+    animation: spin75 4s infinite linear;
+}
+@keyframes spin75 {
+    from {transform:rotate(-75deg);}
+    to {transform:rotate(285deg);}
+}
+
+.spin90 {
+    animation: spin90 4s infinite linear;
+}
+@keyframes spin90 {
+    from {transform:rotate(-90deg);}
+    to {transform:rotate(270deg);}
+}
+
+.spin105 {
+    animation: spin105 4s infinite linear;
+}
+@keyframes spin105 {
+    from {transform:rotate(-105deg);}
+    to {transform:rotate(255deg);}
+}
+
+.spin120 {
+    animation: spin120 4s infinite linear;
+}
+@keyframes spin120 {
+    from {transform:rotate(-120deg);}
+    to {transform:rotate(240deg);}
+}
+
+
+.spin135 {
+    animation: spin135 4s infinite linear;
+}
+@keyframes spin135 {
+    from {transform:rotate(-135deg);}
+    to {transform:rotate(225deg);}
+}
+
+
+.spin150 {
+    animation: spin150 4s infinite linear;
+}
+@keyframes spin150 {
+    from {transform:rotate(-150deg);}
+    to {transform:rotate(210deg);}
+}
+
+
+.spin165 {
+    animation: spin165 4s infinite linear;
+}
+@keyframes spin165 {
+    from {transform:rotate(-165deg);}
+    to {transform:rotate(195deg);}
+}
+
+.spin180 {
+    animation: spin180 4s infinite linear;
+}
+@keyframes spin180 {
+    from {transform:rotate(-180deg);}
+    to {transform:rotate(180deg);}
+}
+
+.spin195 {
+    animation: spin195 4s infinite linear;
+}
+@keyframes spin195 {
+    from {transform:rotate(-195deg);}
+    to {transform:rotate(165deg);}
+}
+
+.spin210 {
+    animation: spin210 4s infinite linear;
+}
+@keyframes spin210 {
+    from {transform:rotate(-210deg);}
+    to {transform:rotate(150deg);}
+}
+
+.spin225 {
+    animation: spin225 4s infinite linear;
+}
+@keyframes spin225 {
+    from {transform:rotate(-225deg);}
+    to {transform:rotate(135deg);}
+}
+
+.spin240 {
+    animation: spin240 4s infinite linear;
+}
+@keyframes spin240 {
+    from {transform:rotate(-240deg);}
+    to {transform:rotate(120deg);}
+}
+
+.spin255 {
+    animation: spin255 4s infinite linear;
+}
+@keyframes spin255 {
+    from {transform:rotate(-255deg);}
+    to {transform:rotate(105deg);}
+}
+
+.spin270 {
+    animation: spin270 4s infinite linear;
+}
+@keyframes spin270 {
+    from {transform:rotate(-270deg);}
+    to {transform:rotate(90deg);}
+}
+
+.spin285 {
+    animation: spin285 4s infinite linear;
+}
+@keyframes spin285 {
+    from {transform:rotate(-285deg);}
+    to {transform:rotate(75deg);}
+}
+
+.spin300 {
+    animation: spin300 4s infinite linear;
+}
+@keyframes spin300 {
+    from {transform:rotate(-300deg);}
+    to {transform:rotate(60deg);}
+}
+
+.spin315 {
+    animation: spin315 4s infinite linear;
+}
+@keyframes spin315 {
+    from {transform:rotate(-315deg);}
+    to {transform:rotate(45deg);}
+}
+
+.spin330 {
+    animation: spin330 4s infinite linear;
+}
+@keyframes spin330 {
+    from {transform:rotate(-330deg);}
+    to {transform:rotate(30deg);}
+}
+
+.spin345 {
+    animation: spin345 4s infinite linear;
+}
+@keyframes spin345 {
+    from {transform:rotate(-345deg);}
+    to {transform:rotate(15deg);}
 }

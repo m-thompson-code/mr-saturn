@@ -1,0 +1,5 @@
+<div *ngFor="let container of containers" [class]="'container'" (click)="pushOlive()" [style.right]="container.x + 'px'">
+    <ng-container *ngFor="let olive of container.olives; let i = index">
+        <olive [olive]="olive" [olivesLength]="container.olives.length" [i]="i"></olive>
+    </ng-container>
+</div>
