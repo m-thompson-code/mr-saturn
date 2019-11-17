@@ -19,7 +19,7 @@
     
                 <section class="section">
                     <mat-checkbox [checked]="settings.allowMsgsFromChat" (change)="updateAllowMsgsFromChat($event)">
-                        Allow messages directly from chat to pop up on overlay (40 char limit)
+                        Allow messages directly from chat to pop up on overlay (50 char limit)
                     </mat-checkbox>
                 </section>
     
@@ -65,10 +65,16 @@
                 </section>
 
                 <section class="section">
-                        <mat-form-field class="input">
-                            <input matInput type="number" placeholder="Additional Mr. Saturns per chat message" [value]="additionalSaturnsInputValue || 0" (change)="setAdditionalSaturns($event)">
-                        </mat-form-field>
-                    </section>
+                    <mat-form-field class="input">
+                        <input matInput type="number" placeholder="Additional Mr. Saturns per chat message" [value]="additionalSaturnsInputValue || 0" (change)="setAdditionalSaturns($event)">
+                    </mat-form-field>
+                </section>
+
+                <section class="section">
+                    <mat-form-field class="input">
+                        <input matInput type="number" placeholder="Number of Mr. Saturns on screen at one time" [value]="saturnsLimitInputValue || 0" (change)="setSaturnsLimit($event)">
+                    </mat-form-field>
+                </section>
 
                 <section class="section">
                     <mat-form-field class="input">
@@ -77,20 +83,34 @@
                 </section>
 
                 <section class="section">
-                        <div class="checkboxes">
-                            <mat-checkbox [checked]="settings.allowMilkman" (change)="updateAllowMilkman($event)">
-                                Allow Milkman popup
-                            </mat-checkbox>
-        
-                            <mat-checkbox [checked]="settings.allowMonaLisa" (change)="updateMonaLisa($event)">
-                                Allow Mona Lisa facehugger popup
-                            </mat-checkbox>
-                            
-                            <mat-checkbox [checked]="settings.allowOlives" (change)="updateAllowOlives($event)">
-                                Allow olive popups
-                            </mat-checkbox>
-                        </div>
-                    </section>
+                    <div class="checkboxes">
+                        <mat-checkbox [checked]="settings.allowMilkman" (change)="updateAllowMilkman($event)">
+                            Allow Milk man popup
+                        </mat-checkbox>
+    
+                        <mat-checkbox [checked]="settings.allowMonaLisa" (change)="updateMonaLisa($event)">
+                            Allow Mona Lisa facehugger popup
+                        </mat-checkbox>
+                        
+                        <mat-checkbox [checked]="settings.allowOlives" (change)="updateAllowOlives($event)">
+                            Allow olive popups
+                        </mat-checkbox>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="checkboxes">
+                        <mat-checkbox [checked]="settings.allowRandomSprites" (change)="updateAllowRandomSprites($event)">
+                            Allow random sprites instead of Mr. Saturns when users chat
+                        </mat-checkbox>
+                    </div>
+
+                    <div class="checkboxes">
+                        <mat-checkbox [checked]="settings.loopRandomSprites" (change)="updateLoopRandomSprites($event)">
+                            Use random sprites instead of Mr. Saturns for "Endless loop"
+                        </mat-checkbox>
+                    </div>
+                </section>
             </mat-card-content>
 
             <section>

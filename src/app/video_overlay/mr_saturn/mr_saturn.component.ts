@@ -24,6 +24,11 @@ export class MrSaturnComponent implements OnInit {
         this.flipY = !!Math.floor(Math.random() * 2);
         this.spin = Math.floor(Math.random() * 24) * 15;
 
+        if (this.saturn.override) {
+            this.imgPath = this.saturn.override;
+            return;
+        }
+
         const useOlive = !(Math.floor(Math.random() * 50));
 
         if (useOlive) {

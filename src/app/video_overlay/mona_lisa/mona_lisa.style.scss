@@ -3,7 +3,7 @@
     bottom: -250px;
     right: calc(50vw - 133.4px / 2);
 
-    transition: transform .5s, right 2s, bottom 1s;
+    transition: transform 3s, right 1s, bottom 0.5s;
     transform:rotate(0deg);
 
     img {
@@ -23,13 +23,13 @@
 }
 
 .peak {
-    bottom: -140px;
+    bottom: -100px;
     animation: peak .6s infinite alternate;
 }
 
 .right {
     right: calc(50vw - 133.4px / 2 - 150px);
-    animation: right .5s infinite alternate;
+    animation: right .25s infinite alternate;
     bottom: -30px;
     img {
         transform: scaleX(-1);
@@ -38,32 +38,32 @@
 
 .left {
     right: calc(50vw - 133.4px / 2 + 150px);
-    animation: left .5s infinite alternate;
+    animation: left .25s infinite alternate;
     bottom: -30px;
 }
 
 .left.height1 {
-    bottom: -30px;
+    bottom: -5px;
 }
 
 .left.height2 {
-    bottom: -70px;
-}
-
-.left.height3 {
-    bottom: -100px;
-}
-
-.right.height1 {
     bottom: -30px;
 }
 
+.left.height3 {
+    bottom: -50px;
+}
+
+.right.height1 {
+    bottom: -5px;
+}
+
 .right.height2 {
-    bottom: -70px;
+    bottom: -30px;
 }
 
 .right.height3 {
-    bottom: -100px;
+    bottom: -50px;
 }
 
 @keyframes peak {

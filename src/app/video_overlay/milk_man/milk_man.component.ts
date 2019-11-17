@@ -6,8 +6,28 @@ import { Component, Input } from '@angular/core';
     styleUrls: ['./milk_man.style.scss']
 })
 export class MilkManComponent {
-    @Input() active: boolean;
+    private _active: boolean;
+    @Input()
+    set active(active: boolean) {
+        this._active = active;
+        if (active) {
+            this.getPath();
+        }
+    }
+    get active(): boolean {
+        return this._active;
+    };
     
+    path: string;
     constructor() {
+    }
+
+    getPath() {
+        const seed = Math.floor(Math.random() * 2);
+        if (seed) {
+            this.path = "assets/milk_man.jpg";
+        } else {
+            this.path = "assets/fbi_milk_man.jpg";
+        }
     }
 }

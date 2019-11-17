@@ -5,15 +5,15 @@ import { OlivesComponent } from './olives/olives.component';
 
 interface TwitchCommand {
     msg: string;
-    milkMan: boolean;
-    monaLisa: boolean;
     'display-name': string;
     username: string;
+    context: any;
 }
 
 const GRAVITY = 0.1;
 
 export class Saturn {
+    override: string;
     moving: boolean;
     x: number;
     y: number;
@@ -121,6 +121,8 @@ export interface Settings {
     allowMilkman: boolean;
     allowMonaLisa: boolean;
     allowOlives: boolean;
+    allowRandomSprites: boolean;
+    loopRandomSprites: boolean;
     volume: number;
     playSounds: boolean;
     limitSounds: boolean;
@@ -128,10 +130,16 @@ export interface Settings {
     motivationDuration: number;
     additionalSaturns: number;
     loopCount: number;
+    saturnsLimit: number;
 
     motivateAt: number;
 
     maxMotivatingSaturns?: number;
+}
+
+export interface SaturnData {
+    msgText: string;
+    saturn: Saturn;
 }
 
 @Component({
@@ -197,7 +205,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
     activeHighscore: boolean;
     activeHighscoreTimeout: any;//NodeJS.Timer;
 
-
+    saturnStack: SaturnData[] = [];
 
     constructor() {
     }
@@ -220,6 +228,8 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
             allowMilkman: false,
             allowMonaLisa: false,
             allowOlives: false,
+            allowRandomSprites: false,
+            loopRandomSprites: false,
             volume: 0,
             playSounds: false,
             limitSounds: true,
@@ -227,6 +237,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
             motivationDuration: 0,
             additionalSaturns: 0,
             loopCount: 0,
+            saturnsLimit: 5,
             motivateAt: null
         }
     }
@@ -242,6 +253,8 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                     allowMilkman: doc.allowMilkman || false,
                     allowMonaLisa: doc.allowMonaLisa || false,
                     allowOlives: doc.allowOlives || false,
+                    allowRandomSprites: doc.allowRandomSprites || false,
+                    loopRandomSprites: doc.loopRandomSprites || false,
                     volume: doc.volume || 0,
                     playSounds: doc.playSounds || false,
                     limitSounds: doc.limitSounds || false,
@@ -249,12 +262,13 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                     motivationDuration: doc.motivationDuration || 0,
                     additionalSaturns: doc.additionalSaturns || 0,
                     loopCount: doc.loopCount || 0,
+                    saturnsLimit: doc.saturnsLimit || 0,
                     motivateAt: doc.motivateAt || 0,
                 }
 
                 if (doc.loopCount) {
-                    if (this.saturns.length < doc.loopCount) {
-                        this.createSaturns(doc.loopCount - this.saturns.length);
+                    if (this.saturnStack.length < doc.loopCount) {
+                        this.createSaturns(doc.loopCount - this.saturnStack.length);
                     }
                 }
 
@@ -283,13 +297,13 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
 
             console.log("Current data: ", docSnapshot.data());
 
-            if (this.settings.allowMilkman && doc.milkMan) {
-                this.activateMilkMan();
-            }
+            // if (this.settings.allowMilkman && doc.milkMan) {
+            //     this.activateMilkMan();
+            // }
 
-            if (this.settings.allowMonaLisa && doc.monaLisa) {
-                this.activateMonaLisa();
-            }
+            // if (this.settings.allowMonaLisa && doc.monaLisa) {
+            //     this.activateMonaLisa();
+            // }
 
             if (doc.username.toLowerCase() === 'streamlabs') {
                 if (doc.msg.indexOf('raided') !== -1 || doc.msg.indexOf('cheer') !== -1 || doc.msg.indexOf('following') !== -1 || doc.msg.indexOf('hosted') !== -1 || doc.msg.indexOf('subscribed') !== -1) {
@@ -298,25 +312,57 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                 return;
             }
 
-            let msg = '';
+            const msg = (doc.msg || '').trim();
+            const _msg = msg.toLowerCase();
 
-            if (doc.msg) {
-                for (let i = 0; i < Math.floor((doc.msg.length / 20)); i++) {
-                    this.createSaturn();
-                }
+            const context = doc && doc.context;
+            // Handle commands
 
-                if (!doc.milkMan && this.settings.allowMsgsFromChat && doc.msg.length < 40) {
-                    msg = doc.msg;
-                }
+            const commands = _msg.split(' ');
 
-                if (this.settings.allowOlives) {
-                    console.log("allowed olives");
+            for (let i = 0; i < commands.length; i++) {
+                const command = commands[i] || "";
+                const next = commands[i + 1] || "";
 
-                    const lowerCaseMsg = doc.msg.toLowerCase();
-                    console.log(lowerCaseMsg);
+                // Olives
+                if (this.settings.allowOlives && command.includes('olive')) {
+                    let oliveCount = 1;
 
-                    const oliveCount = lowerCaseMsg.split('olive').length - 1;
+                    if (context && /x[0-9]+/.test(next)) {
+                        console.log(next);
+                        oliveCount = +next.slice(1) || 0;
+
+                        if (context) {
+                            if (context.mod) {
+                                // No limit
+                            } else if (context.subscriber) {
+                                if (oliveCount > 99) {
+                                    oliveCount = 99;
+                                }
+                            } else {
+                                if (oliveCount > 9) {
+                                    oliveCount = 9;
+                                }
+                            }
+                        } else {
+                            if (oliveCount > 9) {
+                                oliveCount = 9;
+                            }
+                        }
+                    }
+
                     this.olives.pushOlives(oliveCount);
+                    break;
+                // Facehugger
+                } else if (this.settings && (command === 'art' || command === 'face' || command === 'hugger' || command === 'facehugger' || command === 'mona' || command === 'lisa' || command === 'monalisa')) {
+                    this.activateMonaLisa();
+                    break;
+                } 
+                // Milk
+    
+                else if (this.settings.allowMilkman && command.includes('milk')) {
+                    this.activateMilkMan();
+                    break;
                 }
             }
 
@@ -330,38 +376,36 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                 } else {
                     console.log();
                     if (now > motivateAt) {
-                        console.log("DOING MOTIVATIONS");
+                        console.log("DOING MOTIVATIONS extra saturns");
                         // Add extra Mr. Saturns
                         this.createSaturn();
                         this.createSaturn();
-
-                        if (!msg) {
-                            const randomMsgs = [
-                                'Go Samtron5000',
-                                'Go Samtron',
-                                'You can do it',
-                                'Believe!',
-                                'We are... us',
-                                'Motivation!',
-                                'woo',
-                                'yay',
-                            ];
-
-                            msg = randomMsgs[Math.floor(randomMsgs.length * Math.random())];
-
-                            const seed = Math.floor(4 * Math.random());
-
-                            if (seed === 0) {
-                                msg = msg.toUpperCase();
-                            }
-                        }
                     } else {
                         console.log("Before motivating", now - motivateAt);
                     }
                 }
             }
 
-            this.createSaturn(msg);
+            let seed = 0;
+            if (this.settings.allowRandomSprites) {
+                for (let char of _msg) {
+                    seed += char.charCodeAt(0);
+                }
+                seed = seed % 52 + 1;
+            }
+            
+            let override = `assets/sprites/${seed}.gif`;
+
+            if (this.settings.allowMsgsFromChat && msg.length < 50) {
+                this.createSaturn(msg, override);
+            } else {
+                this.createSaturn("", override);
+            }
+
+            // Create extra saturns for longer messages
+            for (let i = 0; i < Math.floor((msg.length / 30)); i++) {
+                this.createSaturn();
+            }
 
             if (this.settings.additionalSaturns) {
                 for (let i = 0; i < this.settings.additionalSaturns; i++) {
@@ -377,6 +421,8 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
         this.createSaturn('BOING!');
         this.createSaturn();
         this.createSaturn();
+
+        this.sendSaturns();
     }
 
     activateHighscore() {
@@ -470,42 +516,72 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                 break;
             }
         }
-    }
 
-    createSaturns(count: number) {
-        for (let i = 0; i < count; i++) {
-            this.createSaturn();
+        // Endless loop
+        if (this.saturnStack.length < this.settings.loopCount) {
+            if (this.settings.loopRandomSprites) {
+                this.createSaturns(this.settings.loopCount - this.saturnStack.length, true);
+            } else {
+                this.createSaturns(this.settings.loopCount - this.saturnStack.length);
+            }
         }
     }
 
-    createSaturn(msgText?: string) {
+    createSaturns(count: number, randomOverride?: boolean) {
+        for (let i = 0; i < count; i++) {
+            if (randomOverride) {
+                const seed = Math.floor(Math.random() * 52) + 1;
+                let override = `assets/sprites/${seed}.gif`;
+
+                this.createSaturn("", override);
+            } else {
+                this.createSaturn();
+            }
+        }
+    }
+
+    createSaturn(msgText?: string, override?: string) {
         console.log(msgText);
         
-        const maxHeight = (this.box && this.box.offsetHeight || 100) - 40;// 40 pixels for the size of the sprite
+        const maxHeight = (this.box && this.box.offsetHeight || 100) - 42;// 42 pixels for the size of the sprite
         const maxWidth = this.box && this.box.offsetWidth || 100;
 
         const onDestroy = (saturn: Saturn) => {
             this.removeSaturn(saturn);
-
-            if (this.saturns.length < this.settings.loopCount) {
-                this.createSaturns(this.settings.loopCount - this.saturns.length);
-            }
         };
 
         const saturn: Saturn = new Saturn(maxWidth, maxHeight, onDestroy);
+
+        saturn.override = override;
+
+        this.saturnStack.unshift({
+            saturn: saturn,
+            msgText: msgText
+        });
+    }
+
+    sendSaturns() {
+        setTimeout(() => {
+            this.sendSaturns();
+        }, 200);
+
+        if (this.saturnStack.length) {
+            console.log("sendSaturns stack size", this.saturnStack.length);
+        }
+
+        if (!this.saturnStack.length || this.saturns.length >= this.settings.saturnsLimit) {
+            return;
+        }
+
+        const saturnData = this.saturnStack.pop(); 
+
+        const saturn = saturnData.saturn;
+        const msgText = saturnData.msgText;
         
         this.saturns.push(saturn);
 
         saturn.setPlan();
         saturn.startMoving();
-
-        if (!msgText) {
-            const seed = Math.floor(10 * Math.random());
-
-            if (seed === 0) {
-                msgText = 'BOING!';
-            }
-        }
 
         if (msgText) {
             setTimeout(() => {

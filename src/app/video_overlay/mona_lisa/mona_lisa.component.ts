@@ -89,6 +89,6 @@ export class MonaLisaComponent implements OnInit {
 
         setTimeout(() => {
             this.shiftHeight();
-        }, 400);
+        }, 200);
     }
 }

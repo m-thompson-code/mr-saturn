@@ -13,6 +13,8 @@ export interface FormSettings {
     allowMilkman: boolean;
     allowMonaLisa: boolean;
     allowOlives: boolean;
+    allowRandomSprites: boolean;
+    loopRandomSprites: boolean;
     volume: number;
     playSounds: boolean;
     limitSounds: boolean;
@@ -20,6 +22,7 @@ export interface FormSettings {
     motivationDuration: number;
     additionalSaturns: number;
     loopCount: number;
+    saturnsLimit: number;
 }
 
 type FontOption = 'Random' | 'Normal' | 'Mr. Saturn Boing' | 'Lumine Hall';
@@ -41,6 +44,7 @@ export class ConfigComponent implements OnInit {
     motivationDurationInputValue: string;
     additionalSaturnsValue: string;
     loopCountInputValue: string;
+    saturnsLimitInputValue: string;
 
     saving: boolean = false;
 
@@ -58,13 +62,16 @@ export class ConfigComponent implements OnInit {
                 allowMilkman: doc.allowMilkman || false,
                 allowMonaLisa: doc.allowMonaLisa || false,
                 allowOlives: doc.allowOlives || false,
+                allowRandomSprites: doc.allowRandomSprites || false,
+                loopRandomSprites: doc.loopRandomSprites || false,
                 volume: doc.volume || 0,
                 playSounds: doc.playSounds || false,
                 limitSounds: doc.limitSounds || false,
                 motivationMinutes: doc.motivationMinutes || 0,
                 motivationDuration: doc.motivationDuration || 0,
                 additionalSaturns: doc.additionalSaturns || 0,
-                loopCount: doc.loopCount || 0
+                loopCount: doc.loopCount || 0,
+                saturnsLimit: doc.saturnsLimit || 0,
             }
 
             if (this.settings.font === 'random') {
@@ -83,6 +90,7 @@ export class ConfigComponent implements OnInit {
             this.motivationDurationInputValue = "" + (this.settings.motivationDuration || 0);
 
             this.loopCountInputValue = "" + (this.settings.loopCount || 0);
+            this.saturnsLimitInputValue = "" + (this.settings.saturnsLimit || 0);
         });
     }
 
@@ -172,6 +180,17 @@ export class ConfigComponent implements OnInit {
         }
     }
 
+    setSaturnsLimit(event: any) {
+        console.log(event.target.value);
+        this.saturnsLimitInputValue = event.target.value;
+
+        const num = +event.target.value;
+
+        if (!isNaN(num)) {
+            this.settings.saturnsLimit = Math.floor(num);
+        }
+    }
+
     updateAllowMilkman(event: MatCheckboxChange) {
         console.log(event);
 
@@ -186,6 +205,16 @@ export class ConfigComponent implements OnInit {
         console.log(event);
 
         this.settings.allowOlives = !!event.checked;
+    }
+    updateAllowRandomSprites(event: MatCheckboxChange) {
+        console.log(event);
+
+        this.settings.allowRandomSprites = !!event.checked;
+    }
+    updateLoopRandomSprites(event: MatCheckboxChange) {
+        console.log(event);
+
+        this.settings.loopRandomSprites = !!event.checked;
     }
 
     save() {

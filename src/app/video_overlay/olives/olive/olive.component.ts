@@ -18,6 +18,8 @@ export class OliveComponent implements OnInit, AfterViewInit {
 
     imgPath: string;
 
+    isSaturn: boolean;
+
     constructor() {
     }
 
@@ -27,9 +29,9 @@ export class OliveComponent implements OnInit, AfterViewInit {
         const useSaturn = !(Math.floor(Math.random() * 20));
 
         if (useSaturn) {
+            this.isSaturn = true;
             const useAlt = !(Math.floor(Math.random() * 12));
 
-            // const seed = Math.floor(Math.random() * 5);// I don't like the 5th one, it looks too much like the 4th
             const seed = Math.floor(Math.random() * 4);
 
             this.imgPath = `assets/spr${seed + 1}${useAlt ? 'b' : ''}x2.gif`;
