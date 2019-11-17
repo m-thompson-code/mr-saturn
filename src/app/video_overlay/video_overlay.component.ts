@@ -135,6 +135,8 @@ export interface Settings {
     motivateAt: number;
 
     maxMotivatingSaturns?: number;
+
+    resetAt: number;
 }
 
 export interface SaturnData {
@@ -238,13 +240,24 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
             additionalSaturns: 0,
             loopCount: 0,
             saturnsLimit: 5,
-            motivateAt: null
+            motivateAt: null,
+            resetAt: 0,
         }
     }
 
     initListeners() {
+        let first = true;
         firebase.firestore().collection("saturns").doc('settings').onSnapshot(docSnapshot => {
             const doc = docSnapshot.data() as Settings;
+
+            if (!first) {
+                if (this.settings.resetAt !== doc.resetAt) {
+                    console.log("RESET", doc.resetAt);
+                    location.reload(true);
+                }
+            }
+
+            first = false;
 
             if (doc) {
                 this.settings = {
@@ -264,6 +277,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                     loopCount: doc.loopCount || 0,
                     saturnsLimit: doc.saturnsLimit || 0,
                     motivateAt: doc.motivateAt || 0,
+                    resetAt: doc.resetAt || 0,
                 }
 
                 if (doc.loopCount) {
@@ -281,7 +295,6 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                 if (!doc.allowOlives) { 
                     this.olives.clearOlives();
                 }
-
             }
         });
 
