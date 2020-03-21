@@ -142,5 +142,8 @@
       }
     }
   },
-  "defaultProject": "mr-saturn"
+  "defaultProject": "mr-saturn",
+  "cli": {
+    "analytics": "4039d410-28c4-4e27-ab23-0a1c69dcb895"
+  }
 }
