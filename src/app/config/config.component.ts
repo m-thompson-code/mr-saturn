@@ -3,7 +3,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import * as firebase from 'firebase/app';
-import { MatSliderChange } from '@angular/material/slider';
+// import { MatSliderChange } from '@angular/material/slider';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -15,11 +15,7 @@ export interface FormSettings {
     allowOlives: boolean;
     allowRandomSprites: boolean;
     loopRandomSprites: boolean;
-    volume: number;
-    playSounds: boolean;
-    limitSounds: boolean;
-    motivationMinutes: number;
-    motivationDuration: number;
+    
     additionalSaturns: number;
     loopCount: number;
     saturnsLimit: number;
@@ -35,13 +31,13 @@ type FontOption = 'Random' | 'Normal' | 'Mr. Saturn Boing' | 'Lumine Hall';
 export class ConfigComponent implements OnInit {
     settings: FormSettings;
 
-    volumeStepperValue: number;
+    // volumeStepperValue: number;
 
     fontOptions: FontOption[] = ['Random', 'Normal', 'Mr. Saturn Boing', 'Lumine Hall'];
     fontOption: FontOption;
 
-    motivationMinutesInputValue: string;
-    motivationDurationInputValue: string;
+    // motivationMinutesInputValue: string;
+    // motivationDurationInputValue: string;
     additionalSaturnsValue: string;
     loopCountInputValue: string;
     saturnsLimitInputValue: string;
@@ -64,11 +60,6 @@ export class ConfigComponent implements OnInit {
                 allowOlives: doc.allowOlives || false,
                 allowRandomSprites: doc.allowRandomSprites || false,
                 loopRandomSprites: doc.loopRandomSprites || false,
-                volume: doc.volume || 0,
-                playSounds: doc.playSounds || false,
-                limitSounds: doc.limitSounds || false,
-                motivationMinutes: doc.motivationMinutes || 0,
-                motivationDuration: doc.motivationDuration || 0,
                 additionalSaturns: doc.additionalSaturns || 0,
                 loopCount: doc.loopCount || 0,
                 saturnsLimit: doc.saturnsLimit || 0,
@@ -84,10 +75,7 @@ export class ConfigComponent implements OnInit {
                 this.fontOption = 'Lumine Hall';
             }
 
-            this.volumeStepperValue = (this.settings.volume || 0) * 10;
-
-            this.motivationMinutesInputValue = "" + (this.settings.motivationMinutes || 0);
-            this.motivationDurationInputValue = "" + (this.settings.motivationDuration || 0);
+            // this.volumeStepperValue = (this.settings.volume || 0) * 10;
 
             this.loopCountInputValue = "" + (this.settings.loopCount || 0);
             this.saturnsLimitInputValue = "" + (this.settings.saturnsLimit || 0);
@@ -116,47 +104,13 @@ export class ConfigComponent implements OnInit {
         this.settings.allowMsgsFromChat = !!event.checked;
     }
 
-    updatePlaySounds(event: MatCheckboxChange) {
-        console.log(event);
+    // updateVolume(event: MatSliderChange) {
+    //     console.log(event);
+    //     this.volumeStepperValue = event.value;
+    //     this.settings.volume = event.value / 10;
 
-        this.settings.playSounds = !!event.checked;
-    }
-
-    updateLimitSounds(event: MatCheckboxChange) {
-        console.log(event);
-
-        this.settings.limitSounds = !!event.checked;
-    }
-
-    updateVolume(event: MatSliderChange) {
-        console.log(event);
-        this.volumeStepperValue = event.value;
-        this.settings.volume = event.value / 10;
-
-        console.log(this.volumeStepperValue, this.settings.volume);
-    }
-
-    setMotivationMinutes(event: any) {
-        console.log(event.target.value);
-        this.motivationMinutesInputValue = event.target.value;
-
-        const num = +event.target.value;
-
-        if (!isNaN(num)) {
-            this.settings.motivationMinutes = Math.floor(num);
-        }
-    }
-
-    setMotivationDuration(event: any) {
-        console.log(event.target.value);
-        this.motivationDurationInputValue = event.target.value;
-
-        const num = +event.target.value;
-
-        if (!isNaN(num)) {
-            this.settings.motivationDuration = Math.floor(num);
-        }
-    }
+    //     console.log(this.volumeStepperValue, this.settings.volume);
+    // }
 
     setAdditionalSaturns(event: any) {
         console.log(event.target.value);

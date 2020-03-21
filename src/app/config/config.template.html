@@ -22,19 +22,7 @@
                         Allow messages directly from chat to pop up on overlay (50 char limit)
                     </mat-checkbox>
                 </section>
-    
-                <section class="section">
-                    <div class="checkboxes">
-                        <mat-checkbox [checked]="settings.playSounds" (change)="updatePlaySounds($event)">
-                            Play Mr. Saturn sounds
-                        </mat-checkbox>
-    
-                        <mat-checkbox [checked]="settings.limitSounds" (change)="updateLimitSounds($event)">
-                            Limit sounds (Will prevent sounds from happening too frequently)
-                        </mat-checkbox>
-                    </div>
-                </section>
-
+<!-- 
                 <section>
                     <div class="volume-slider">
                         <span>
@@ -50,8 +38,8 @@
                             (change)="updateVolume($event)">
                         </mat-slider>
                     </div>
-                </section>
-    
+                </section> -->
+<!--     
                 <section class="section">
                     <mat-form-field class="input">
                         <input matInput type="number" placeholder="Minutes between motivation rallies (set to 0 to disable this feature)" [value]="motivationMinutesInputValue || 0" (change)="setMotivationMinutes($event)">
@@ -62,7 +50,7 @@
                     <mat-form-field class="input">
                         <input matInput type="number" placeholder="Duration (in seconds) for motivation rallies (set to 0 to disable this feature)" [value]="motivationDurationInputValue || 0" (change)="setMotivationDuration($event)">
                     </mat-form-field>
-                </section>
+                </section> -->
 
                 <section class="section">
                     <mat-form-field class="input">

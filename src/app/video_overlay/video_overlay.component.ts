@@ -123,20 +123,10 @@ export interface Settings {
     allowOlives: boolean;
     allowRandomSprites: boolean;
     loopRandomSprites: boolean;
-    volume: number;
-    playSounds: boolean;
-    limitSounds: boolean;
-    motivationMinutes: number;
-    motivationDuration: number;
+    
     additionalSaturns: number;
     loopCount: number;
     saturnsLimit: number;
-
-    motivateAt: number;
-
-    maxMotivatingSaturns?: number;
-
-    resetAt: number;
 }
 
 export interface SaturnData {
@@ -200,12 +190,6 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
     activeMilkMan: boolean = false;
 
     dark: boolean;
-    showInput: boolean;
-
-    maxMotivatingSaturns: number;
-
-    activeHighscore: boolean;
-    activeHighscoreTimeout: any;//NodeJS.Timer;
 
     saturnStack: SaturnData[] = [];
 
@@ -232,32 +216,17 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
             allowOlives: false,
             allowRandomSprites: false,
             loopRandomSprites: false,
-            volume: 0,
-            playSounds: false,
-            limitSounds: true,
-            motivationMinutes: 0,
-            motivationDuration: 0,
+            
             additionalSaturns: 0,
             loopCount: 0,
             saturnsLimit: 5,
-            motivateAt: null,
-            resetAt: 0,
         }
     }
 
     initListeners() {
-        let first = true;
         firebase.firestore().collection("saturns").doc('settings').onSnapshot(docSnapshot => {
             const doc = docSnapshot.data() as Settings;
 
-            if (!first) {
-                if (this.settings.resetAt !== doc.resetAt) {
-                    console.log("RESET", doc.resetAt);
-                    location.reload(true);
-                }
-            }
-
-            first = false;
 
             if (doc) {
                 this.settings = {
@@ -268,16 +237,10 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                     allowOlives: doc.allowOlives || false,
                     allowRandomSprites: doc.allowRandomSprites || false,
                     loopRandomSprites: doc.loopRandomSprites || false,
-                    volume: doc.volume || 0,
-                    playSounds: doc.playSounds || false,
-                    limitSounds: doc.limitSounds || false,
-                    motivationMinutes: doc.motivationMinutes || 0,
-                    motivationDuration: doc.motivationDuration || 0,
+                   
                     additionalSaturns: doc.additionalSaturns || 0,
                     loopCount: doc.loopCount || 0,
                     saturnsLimit: doc.saturnsLimit || 0,
-                    motivateAt: doc.motivateAt || 0,
-                    resetAt: doc.resetAt || 0,
                 }
 
                 if (doc.loopCount) {
@@ -285,12 +248,6 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                         this.createSaturns(doc.loopCount - this.saturnStack.length);
                     }
                 }
-
-                if (doc.maxMotivatingSaturns > this.maxMotivatingSaturns) {
-                    this.activateHighscore();
-                }
-
-                this.maxMotivatingSaturns = doc.maxMotivatingSaturns;
 
                 if (!doc.allowOlives) { 
                     this.olives.clearOlives();
@@ -309,14 +266,6 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
             const doc = docSnapshot.data() as TwitchCommand;
 
             console.log("Current data: ", docSnapshot.data());
-
-            // if (this.settings.allowMilkman && doc.milkMan) {
-            //     this.activateMilkMan();
-            // }
-
-            // if (this.settings.allowMonaLisa && doc.monaLisa) {
-            //     this.activateMonaLisa();
-            // }
 
             if (doc.username.toLowerCase() === 'streamlabs') {
                 if (doc.msg.indexOf('raided') !== -1 || doc.msg.indexOf('cheer') !== -1 || doc.msg.indexOf('following') !== -1 || doc.msg.indexOf('hosted') !== -1 || doc.msg.indexOf('subscribed') !== -1) {
@@ -372,30 +321,9 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                     break;
                 } 
                 // Milk
-    
                 else if (this.settings.allowMilkman && command.includes('milk')) {
                     this.activateMilkMan();
                     break;
-                }
-            }
-
-            const now = Date.now();
-
-            if (this.settings.motivationMinutes) {
-                const motivateAt = this.settings.motivateAt || 0;
-
-                if (now > motivateAt + 1000 * this.settings.motivationDuration) {
-                    console.log("too late for motivateAt", now - motivateAt);
-                } else {
-                    console.log();
-                    if (now > motivateAt) {
-                        console.log("DOING MOTIVATIONS extra saturns");
-                        // Add extra Mr. Saturns
-                        this.createSaturn();
-                        this.createSaturn();
-                    } else {
-                        console.log("Before motivating", now - motivateAt);
-                    }
                 }
             }
 
@@ -438,18 +366,6 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
         this.sendSaturns();
     }
 
-    activateHighscore() {
-        this.playCheer();
-
-        clearTimeout(this.activeHighscoreTimeout);
-        
-        this.activeHighscore = true;
-
-        this.activeHighscoreTimeout = setTimeout(() => {
-            this.activeHighscore = false;
-        }, 5000);
-    }
-
     activateMilkMan() {
         clearTimeout(this.milkManTimeout);
         
@@ -462,62 +378,6 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
 
     activateMonaLisa() {
         this.monaLisa.activate();
-    }
-
-    playSound() {
-        if (!this.settings.playSounds) {
-            return;
-        }
-
-        if (this.settings.limitSounds) {
-            if (this.lastPlayedSoundAt && (this.lastPlayedSoundAt > Date.now() - (1000 + 100 * this.msgs.length))) {
-                return;
-            }
-        }
-
-        let seed = Math.floor(3 * Math.random());
-
-        if (seed === this.lastSoundSeed) {
-            seed += 1;
-            if (seed >= 3) {
-                seed = 0;
-            }
-        }
-
-        let player: HTMLAudioElement = null;
-
-        if (seed === 0) {
-            player = this.player1;
-        } else if (seed === 1) {
-            player = this.player2;
-        } else if (seed === 2) {
-            player = this.player3;
-        }
-
-        this.lastSoundSeed = seed;
-        this.lastPlayedSoundAt = Date.now();
-
-        if (player) {
-            player.volume = this.settings.volume;
-
-            return player.play().catch(error => {
-                console.error(error);
-            });
-        }
-    }
-
-    playCheer() {
-        if (!this.settings.playSounds) {
-            return;
-        }
-
-        if (this.cheer) {
-            this.cheer.volume = this.settings.volume / 2;
-
-            return this.cheer.play().catch(error => {
-                console.error(error);
-            });
-        }
     }
 
     removeSaturn(removeSaturn: Saturn) {
@@ -604,8 +464,6 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
     }
 
     createMsg(saturn: Saturn, msgText: string) {
-        this.playSound();
-
         this.msgs.push({
             text: msgText,
             destroyed: false,

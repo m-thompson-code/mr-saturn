@@ -19,6 +19,14 @@ const routes: Routes = [
         component:ConfigComponent
     },
     {
+        path: 'demo/video_overlay',
+        component: VideoOverlayComponent
+    },
+    {
+        path: 'demo/config',
+        component:ConfigComponent
+    },
+    {
         path: 'jump_scare',
         component: JumpScareComponent
     },
