@@ -1,4 +1,37 @@
-<div class="mat-app-background basic-container">
+<div *ngIf="!authService.user" class="mat-app-background basic-container">
+    <form (submit)="$event.preventDefault()">
+        <mat-card>
+            <mat-card-content class="sign-in-content">
+                <h2 class="h2">Settings</h2>
+                <section class="section">
+                    <mat-form-field class="input">
+                        <input matInput type="email" placeholder="'Email'" [value]="email || ''" (change)="setEmail($event)">
+                    </mat-form-field>
+                </section>
+
+                <section class="section">
+                    <mat-form-field class="input">
+                        <input matInput type="password" placeholder="'Password'" [value]="password || ''" (change)="setPassword($event)">
+                    </mat-form-field>
+                </section>
+            </mat-card-content>      
+
+            <section>
+                <button [style.margin-right]="'16px'" (click)="signIn()" mat-raised-button color="primary" [disabled]="saving">Sign In</button>
+                <button (click)="forgotPassword()" mat-raised-button color="secondary" [disabled]="saving">Forgot</button>
+            </section>
+        </mat-card>
+
+        <div class="loader" *ngIf="!settings || saving">
+            <mat-progress-spinner
+                class="example-margin"
+                mode="indeterminate">
+            </mat-progress-spinner>
+        </div>
+    </form>
+</div>
+
+<div *ngIf="authService.user" class="mat-app-background basic-container">
     <form (submit)="$event.preventDefault()">
         <mat-card *ngIf="settings">
             <mat-card-content>
@@ -22,35 +55,6 @@
                         Allow messages directly from chat to pop up on overlay (50 char limit)
                     </mat-checkbox>
                 </section>
-<!-- 
-                <section>
-                    <div class="volume-slider">
-                        <span>
-                            Volume:
-                        </span>
-    
-                        <mat-slider
-                            [max]="10"
-                            [min]="0"
-                            [thumbLabel]="true"
-                            [step]="0.1"
-                            [value]="volumeStepperValue"
-                            (change)="updateVolume($event)">
-                        </mat-slider>
-                    </div>
-                </section> -->
-<!--     
-                <section class="section">
-                    <mat-form-field class="input">
-                        <input matInput type="number" placeholder="Minutes between motivation rallies (set to 0 to disable this feature)" [value]="motivationMinutesInputValue || 0" (change)="setMotivationMinutes($event)">
-                    </mat-form-field>
-                </section>
-
-                <section class="section">
-                    <mat-form-field class="input">
-                        <input matInput type="number" placeholder="Duration (in seconds) for motivation rallies (set to 0 to disable this feature)" [value]="motivationDurationInputValue || 0" (change)="setMotivationDuration($event)">
-                    </mat-form-field>
-                </section> -->
 
                 <section class="section">
                     <mat-form-field class="input">

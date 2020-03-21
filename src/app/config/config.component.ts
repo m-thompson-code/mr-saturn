@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 import * as firebase from 'firebase/app';
-// import { MatSliderChange } from '@angular/material/slider';
+
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+
+import { AuthService } from '../auth.service';
 
 export interface FormSettings {
     font: 'random' | 'normal' | 'boing' | 'lumine hall';
@@ -44,7 +46,10 @@ export class ConfigComponent implements OnInit {
 
     saving: boolean = false;
 
-    constructor(public router: Router, private _snackBar: MatSnackBar) {
+    email: string;
+    password: string;
+
+    constructor(public router: Router, private _snackBar: MatSnackBar, public authService: AuthService) {
         this.router = router;
     }
 
@@ -82,7 +87,62 @@ export class ConfigComponent implements OnInit {
         });
     }
 
-    updateFont(event: MatRadioChange) {
+    public setEmail(event: any) {
+        console.log(event.target.value);
+        this.email = "" + event.target.value;
+    }
+
+    public setPassword(event: any) {
+        console.log(event.target.value);
+        this.password = "" + event.target.value;
+    }
+
+    public signIn(): Promise<void> {
+        if (this.saving) {
+            return Promise.resolve();
+        }
+
+        this.saving = true;
+        return firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(() => {
+            this._snackBar.open('Sign in successful', 'OK', {
+                duration: 3000,
+                panelClass: 'success-snack-bar'
+            });
+        }).catch(error => {
+            console.error(error);
+            this._snackBar.open(`Error: ${error.message || 'Unknown'}`, 'close', {
+                duration: 0,
+                panelClass: 'snack-bar-error'
+            });
+        }).then(() => {
+            this.saving = false;
+        });
+    }
+
+    public forgotPassword(): Promise<void> {
+        if (this.saving) {
+            return Promise.resolve();
+        }
+
+        this.saving = true;
+
+        return firebase.auth().sendPasswordResetEmail(this.email).then(() => {
+            this._snackBar.open('Password reset sent', 'OK', {
+                duration: 3000,
+                panelClass: 'success-snack-bar'
+            });
+        }).catch(error => {
+            console.error(error);
+            this._snackBar.open(`Error: ${error.message || 'Unknown'}`, 'close', {
+                duration: 0,
+                panelClass: 'snack-bar-error'
+            });
+        }).then(() => {
+            this.saving = false;
+        });
+    }
+
+    public updateFont(event: MatRadioChange) {
         console.log(event);
 
         this.fontOption = event.value;
@@ -98,13 +158,13 @@ export class ConfigComponent implements OnInit {
         }
     }
 
-    updateAllowMsgsFromChat(event: MatCheckboxChange) {
+    public updateAllowMsgsFromChat(event: MatCheckboxChange) {
         console.log(event);
 
         this.settings.allowMsgsFromChat = !!event.checked;
     }
 
-    // updateVolume(event: MatSliderChange) {
+    // public updateVolume(event: MatSliderChange) {
     //     console.log(event);
     //     this.volumeStepperValue = event.value;
     //     this.settings.volume = event.value / 10;
@@ -112,7 +172,7 @@ export class ConfigComponent implements OnInit {
     //     console.log(this.volumeStepperValue, this.settings.volume);
     // }
 
-    setAdditionalSaturns(event: any) {
+    public setAdditionalSaturns(event: any) {
         console.log(event.target.value);
         this.additionalSaturnsValue = event.target.value;
 
@@ -123,7 +183,7 @@ export class ConfigComponent implements OnInit {
         }
     }
 
-    setLoopCount(event: any) {
+    public setLoopCount(event: any) {
         console.log(event.target.value);
         this.loopCountInputValue = event.target.value;
 
@@ -134,7 +194,7 @@ export class ConfigComponent implements OnInit {
         }
     }
 
-    setSaturnsLimit(event: any) {
+    public setSaturnsLimit(event: any) {
         console.log(event.target.value);
         this.saturnsLimitInputValue = event.target.value;
 
@@ -145,33 +205,33 @@ export class ConfigComponent implements OnInit {
         }
     }
 
-    updateAllowMilkman(event: MatCheckboxChange) {
+    public updateAllowMilkman(event: MatCheckboxChange) {
         console.log(event);
 
         this.settings.allowMilkman = !!event.checked;
     }
-    updateMonaLisa(event: MatCheckboxChange) {
+    public updateMonaLisa(event: MatCheckboxChange) {
         console.log(event);
 
         this.settings.allowMonaLisa = !!event.checked;
     }
-    updateAllowOlives(event: MatCheckboxChange) {
+    public updateAllowOlives(event: MatCheckboxChange) {
         console.log(event);
 
         this.settings.allowOlives = !!event.checked;
     }
-    updateAllowRandomSprites(event: MatCheckboxChange) {
+    public updateAllowRandomSprites(event: MatCheckboxChange) {
         console.log(event);
 
         this.settings.allowRandomSprites = !!event.checked;
     }
-    updateLoopRandomSprites(event: MatCheckboxChange) {
+    public updateLoopRandomSprites(event: MatCheckboxChange) {
         console.log(event);
 
         this.settings.loopRandomSprites = !!event.checked;
     }
 
-    save() {
+    public save() {
         if (this.saving) {
             return;
         }
@@ -191,6 +251,6 @@ export class ConfigComponent implements OnInit {
             });
         }).then(() => {
             this.saving = false;
-        })
+        });
     }
 }

@@ -33,6 +33,8 @@ import { OliveComponent } from './video_overlay/olives/olive/olive.component';
 import * as firebase from 'firebase/app';
 
 import "firebase/firestore";
+import "firebase/auth";
+import { AuthService } from './auth.service';
 
 // Initialize Firebase
 var firebaseConfig = {
@@ -80,7 +82,9 @@ firebase.initializeApp(firebaseConfig);
     MatProgressSpinnerModule,
     MatSnackBarModule
   ],
-  providers: [],
+  providers: [
+    AuthService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
