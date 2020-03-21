@@ -11,7 +11,7 @@ interface Eye {
 })
 export class EyesComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() box: HTMLDivElement;
-    @ViewChild('img', {static: false}) img: ElementRef;
+    @ViewChild('img') img: ElementRef;
 
     deltaX: number;
     deltaY: number;

@@ -145,29 +145,29 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
     player3: HTMLAudioElement;
     cheer: HTMLAudioElement;
 
-    @ViewChild('mr_saturn_sfx_1', {static: false}) set playerRef1(ref: ElementRef<HTMLAudioElement>) {
+    @ViewChild('mr_saturn_sfx_1') set playerRef1(ref: ElementRef<HTMLAudioElement>) {
         if (ref && ref.nativeElement) {
             this.player1 = ref.nativeElement;
         }
     }
-    @ViewChild('mr_saturn_sfx_2', {static: false}) set playerRef2(ref: ElementRef<HTMLAudioElement>) {
+    @ViewChild('mr_saturn_sfx_2') set playerRef2(ref: ElementRef<HTMLAudioElement>) {
         if (ref && ref.nativeElement) {
             this.player2 = ref.nativeElement;
         }
     }
-    @ViewChild('mr_saturn_sfx_3', {static: false}) set playerRef3(ref: ElementRef<HTMLAudioElement>) {
+    @ViewChild('mr_saturn_sfx_3') set playerRef3(ref: ElementRef<HTMLAudioElement>) {
         if (ref && ref.nativeElement) {
             this.player3 = ref.nativeElement;
         }
     }
-    @ViewChild('cheer', {static: false}) set cheerRef(ref: ElementRef<HTMLAudioElement>) {
+    @ViewChild('cheer') set cheerRef(ref: ElementRef<HTMLAudioElement>) {
         if (ref && ref.nativeElement) {
             this.cheer = ref.nativeElement;
         }
     }
 
-    @ViewChild('monaLisa', {static: false}) monaLisa: MonaLisaComponent;
-    @ViewChild('olives', {static: false}) olives: OlivesComponent;
+    @ViewChild('monaLisa') monaLisa: MonaLisaComponent;
+    @ViewChild('olives') olives: OlivesComponent;
 
     lastSoundSeed: number = 0;
 
@@ -177,7 +177,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
 
     box: HTMLDivElement;
 
-    @ViewChild('the_box', {static: false}) set boxRef(ref: ElementRef<HTMLDivElement>) {
+    @ViewChild('the_box') set boxRef(ref: ElementRef<HTMLDivElement>) {
         this.box = ref.nativeElement;
     }
 
