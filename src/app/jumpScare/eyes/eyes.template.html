@@ -1,0 +1,10 @@
+<div class="img-outer">
+    <div [class]="'img-container ' + extraClass + ' ' + _extraClassAfter" [style.top]="getX() + 'px'" [style.left]="getY() + 'px'" [style.height]="height + 'px'" [style.width]="width + 'px'">
+        <ng-container *ngIf="open">
+            <img #img src="../../../assets/jumpScare/open_eyes.png">
+        </ng-container>
+        <ng-container *ngIf="!open">
+            <img #img src="../../../assets/jumpScare/close_eyes.png">
+        </ng-container>
+    </div>
+</div>

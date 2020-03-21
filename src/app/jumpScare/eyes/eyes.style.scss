@@ -1,0 +1,80 @@
+// :host ::ng-deep {
+//     width: 100%;
+//     height: 100%;
+// }
+
+.img-outer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+}
+
+.img-container {
+    position: relative;
+
+    height: 180px;
+    width: 448px;
+}
+
+.slow {
+    animation: fadeIn 2s normal linear;
+    transition: width 3s ease-out, height 3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeOut {
+    from {opacity: .35;}
+    to {opacity: 0;}
+}
+
+.slow-after {
+    opacity: 1;
+    // transition: opacity 2s, width 3s ease-out, height 3s ease-out;
+}
+
+.fast {
+    // opacity: .7;
+    animation: fadeOut .25s normal linear;
+
+    transition: width .25s ease-out, height .25s ease-out;
+}
+
+.faded {
+    opacity: .2;
+}
+
+.faded-extra {
+    opacity: .1;
+}
+
+.fast-after {
+    opacity: 0;
+    transition: width .25s ease-out, height .25s ease-out;
+
+    // transition: opacity .5s, width .25s ease-out, height .25s ease-out;
+}
+
+img {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    // width: 50%;
+    // height: auto;
+
+    // width: auto !important;
+    // background: green;
+
+    // transition: width 3s ease-out, height 3s ease-out;
+}

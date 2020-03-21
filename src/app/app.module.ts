@@ -20,6 +20,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { VideoOverlayComponent } from './video_overlay/video_overlay.component';
 import { ConfigComponent } from './config/config.component';
 
+import { JumpScareComponent } from './jumpScare/jumpScare.component';
+import { EyesComponent } from './jumpScare/eyes/eyes.component';
+
 import { MrSaturnComponent } from './video_overlay/mr_saturn/mr_saturn.component';
 import { MsgComponent } from './video_overlay/msg/msg.component';
 import { MilkManComponent } from './video_overlay/milk_man/milk_man.component';
@@ -52,6 +55,9 @@ firebase.initializeApp(firebaseConfig);
 
     VideoOverlayComponent,
     ConfigComponent,
+
+    JumpScareComponent,
+    EyesComponent,
 
     MrSaturnComponent,
     MsgComponent,
