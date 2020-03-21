@@ -3,11 +3,13 @@ import * as firebase from 'firebase/app';
 import { MonaLisaComponent } from './mona_lisa/mona_lisa.component';
 import { OlivesComponent } from './olives/olives.component';
 
+import { ChatUserstate } from 'tmi.js';
+
 interface TwitchCommand {
     msg: string;
     'display-name': string;
     username: string;
-    context: any;
+    context: ChatUserstate;
 }
 
 const GRAVITY = 0.1;
