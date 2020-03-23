@@ -1,27 +1,41 @@
-# MrSaturn
+# Mr Saturn Client
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.0.6.
+[Mr Saturn Server](https://github.com/m-thompson-code/mr-saturn-server)
 
-## Development server
+An interactive demo can be found [here](https:mr-saturn.web.app/demo/overlay)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## About SAMTRON5000
 
-## Code scaffolding
+Samantha is an old YouTube gaming content creator from 2007. Here is her [Youtube channel](https://www.youtube.com/user/samtron5000/videos).
+Currently she plays indie, retro, weird, and funny games for entertainment on her [Twitch channel](https://www.twitch.tv/samtron5000). 
+Some games she has played / finished on the stream in the past year:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- EarthBound
+- Mother 2
+- Lisa the Joyful/Painful
+- Hypnospace Outlaw
+- Dark Souls 3
+- 7 Days
+- I Love You, Colonel Sanders
+- North Korean games
 
-## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-## Running unit tests
+## About the Mr Saturn project
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Currently SAMTRON5000 uses the [Mr Saturn Client](https://github.com/m-thompson-code/mr-saturn) application as an overlay on her stream. The users can interactive with the overlay using commands (messages sometimes only need to include the command).
 
-## Running end-to-end tests
+Also a bot listens to the chat and can interact with users based on their message. 
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+- `milk`: Summons the milk man (2 variations). Bot will announce that the milk man is coming by asking "Who is the milkman?"
+- `art` || `face` || `hugger` || `mona` || `lisa`: Summons the Mona Lisa with a Facehugger
+- `olive` || `olive x#{N}`: Summons an olive. If you use the x syntax, you can summon many olives at once. Depending on if you are subscribed / admin, you may be limited in how many olives you can summon at one time. Ex: `olive x10` will summon 10 olives.
+- `sandwich` || `sammich`: Will give a user a sandwich.
+- `!d#{N}`: Bot will roll a #{N} sided dice and announce the results. Ex: `!d20` -> `4` (random number between 1 and 20)
+- `Love is #{some quote}`: Server will store the quote (Including "Love is" part). These quotes will pop up randomly during a stream
+- `Love`: If a command doesn't include "Love is", a random "Love is" quote will pop up into the chat of the stream.
 
-## Further help
+Whenever users chat during a stream, Mr Saturns and random characters for Mother / Earthbound will bounce around in the overlay.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+The [Mr Saturn Server](https://github.com/m-thompson-code/mr-saturn-server) is responsible for listening to the chat for the bot to interact with the stream, and store messages for commands that update the overlay on the client.
+
