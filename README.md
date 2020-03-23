@@ -2,7 +2,7 @@
 
 [Mr Saturn Server](https://github.com/m-thompson-code/mr-saturn-server)
 
-An interactive demo can be found [here](https:mr-saturn.web.app/demo/overlay)
+<!-- An interactive demo can be found [here](https://mr-saturn.web.app/demo/overlay) -->
 
 ## About SAMTRON5000
 
