@@ -2,6 +2,10 @@
 
 [Mr Saturn Server](https://github.com/m-thompson-code/mr-saturn-server)
 
+Angular 9 client project
+
+Use [Firebase Firestore](https://firebase.google.com/docs/firestore) as a realtime database to listen for instructions from the Mr Saturn Server.
+
 <!-- An interactive demo can be found [here](https://mr-saturn.web.app/demo/overlay) -->
 
 ## About SAMTRON5000
