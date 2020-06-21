@@ -150,6 +150,8 @@ export interface SaturnData {
     styleUrls: ['./video_overlay.style.scss']
 })
 export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild("cheer", {static: true}) cheer: ElementRef<HTMLMediaElement>;
+
     @ViewChild('monaLisa') monaLisa: MonaLisaComponent;
     @ViewChild('olives') olives: OlivesComponent;
 
@@ -345,6 +347,16 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 
                 return;
+            }
+
+            if (_msg === 'cheer') {
+                this.playCheer();
+            }
+        }
+
+        if (context && (context.subscriber || context.mod || context['user-id'] === '36547695')) {
+            if (_msg === 'cheer') {
+                this.playCheer();
             }
         }
 
@@ -606,6 +618,14 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
         }).catch(error => {
             console.error(error);
         });
+    }
+
+    public playCheer(): void {
+        this.cheer.nativeElement.currentTime = 0;
+        this.cheer.nativeElement.volume = .4;
+        this.cheer.nativeElement.play();
+
+        this.createSaturns(6);
     }
 
     public ngOnDestroy(): void {
