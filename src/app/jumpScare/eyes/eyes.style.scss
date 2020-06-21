@@ -1,65 +1,81 @@
-// :host ::ng-deep {
-//     width: 100%;
-//     height: 100%;
-// }
-
-.img-outer {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    position: absolute;
-}
-
-.img-container {
-    position: relative;
-
-    height: 180px;
-    width: 448px;
-}
-
-.slow {
-    animation: fadeIn 2s normal linear;
-    transition: width 3s ease-out, height 3s ease-out;
-}
-
 @keyframes fadeIn {
     from {opacity: 0;}
     to {opacity: 1;}
 }
 
-@keyframes fadeOut {
-    from {opacity: .35;}
-    to {opacity: 0;}
+@keyframes grow {
+    from {width: 20vw;}
+    to {width: 40vw;}
 }
 
-.slow-after {
-    opacity: 1;
-    // transition: opacity 2s, width 3s ease-out, height 3s ease-out;
+.img-container {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+    
+    transform: translate(-50%, -50%);
+
+    width: 50vw;// Temp
+    height: auto;
 }
 
-.fast {
-    // opacity: .7;
-    animation: fadeOut .25s normal linear;
+.test {
+    animation-name: fadeIn, grow;
+    animation-duration: 3000ms;
+    animation-timing-function: linear;
 
-    transition: width .25s ease-out, height .25s ease-out;
+    width: 40vw;
+}
+.test-shade {
+    animation-name: grow;
+    animation-duration: 3000ms;
+    animation-timing-function: linear;
+
+    width: 40vw;
 }
 
-.faded {
-    opacity: .2;
+.test-2 {
+    width: 60vw;
 }
 
-.faded-extra {
-    opacity: .1;
+.test-2-shade {
+    width: 60vw;
 }
 
-.fast-after {
-    opacity: 0;
-    transition: width .25s ease-out, height .25s ease-out;
+.eyes-1 {
+    width: 10vw;
+}
+.eyes-2 {
+    width: 20vw;
+}
+.eyes-3 {
+    width: 30vw;
+}
+.eyes-4 {
+    width: 40vw;
+}
+.eyes-5 {
+    width: 50vw;
+}
+.eyes-6 {
+    width: 60vw;
+}
+.eyes-7 {
+    width: 70vw;
+}
+.eyes-8 {
+    width: 80vw;
+}
+.eyes-9 {
+    width: 90vw;
+}
+.eyes-10 {
+    width: 100vw;
+}
 
-    // transition: opacity .5s, width .25s ease-out, height .25s ease-out;
+.large-eyes {
+    width: 80vw;
 }
 
 img {
@@ -68,13 +84,9 @@ img {
     display: block;
 
     width: 100%;
+    min-width: 1px;
     height: auto;
 
-    // width: 50%;
-    // height: auto;
-
-    // width: auto !important;
-    // background: green;
-
-    // transition: width 3s ease-out, height 3s ease-out;
+    margin: 0;
+    padding: 0;
 }

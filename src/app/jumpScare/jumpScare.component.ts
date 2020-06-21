@@ -1,149 +1,262 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-
-interface Eyes {
-    initRatio: number;
-    afterRatio: number;
-    gitter: number;
-    extraClass?: string;
-    extraClassAfter?: string;
-    open: boolean;
-}
+import { Eyes } from './eyes/eyes.component';
 
 @Component({
-    selector: 'rr-jump-scare',
+    selector: 'moo-jump-scare',
     templateUrl: './jumpScare.template.html',
     styleUrls: ['./jumpScare.style.scss']
 })
 export class JumpScareComponent implements OnInit, AfterViewInit {
-    @ViewChild("openEyesPlaceholder", {static: true}) openEyesPlaceholder: ElementRef;
+    // @ViewChild("openEyesPlaceholder", {static: true}) openEyesPlaceholder: ElementRef;
+    @ViewChild("crying", {static: true}) crying: ElementRef<HTMLMediaElement>;
+    @ViewChild("scream", {static: true}) scream: ElementRef<HTMLMediaElement>;
+    @ViewChild("heartbeat", {static: true}) heartbeat: ElementRef<HTMLMediaElement>;
 
     loading1: boolean;
     loading2: boolean;
     loading: boolean;
-    // player1: HTMLAudioElement;
 
-    // @ViewChild('mr_saturn_sfx_1', {static: false}) set playerRef1(ref: ElementRef<HTMLAudioElement>) {
-    //     if (ref && ref.nativeElement) {
-    //         this.player1 = ref.nativeElement;
-    //     }
-    // }
-
+    mainEyeses: Eyes[] = [];
     eyeses: Eyes[] = [];
 
     JSON: any;
+
+    addEyesTimeout?: number;
 
     constructor() {
     }
 
     ngOnInit() {
-        this.JSON = JSON;
+        const imageUrls = [
+            '../../../assets/jumpScare/eyes/eyes_01.png',
+            '../../../assets/jumpScare/eyes/eyes_02.png',
+            '../../../assets/jumpScare/eyes/eyes_03.png',
+            '../../../assets/jumpScare/eyes/eyes_04.png',
+            '../../../assets/jumpScare/eyes/eyes_05.png',
+            '../../../assets/jumpScare/eyes/eyes_06.png',
+            '../../../assets/jumpScare/eyes/eyes_07.png',
+            '../../../assets/jumpScare/eyes/eyes_08.png',
+            '../../../assets/jumpScare/eyes/eyes_09.png',
+            '../../../assets/jumpScare/eyes/eyes_10.png',
+        ];
+
         this.loading = true;
 
-        var src = window.getComputedStyle(this.openEyesPlaceholder.nativeElement)['background-image'];
-        var src2 = window.getComputedStyle(this.openEyesPlaceholder.nativeElement)['background-image'];
+        this.preloadImages(imageUrls).then(() => {
+            this.loading = false;
 
-        var url = src.match(/\((.*?)\)/)[1].replace(/('|")/g,'');
-        var url2 = src2.match(/\((.*?)\)/)[1].replace(/('|")/g,'');
+            this.init();
+        });
+    }
 
-        var img = new Image();
-        var img2 = new Image();
+    public preloadImages(urls: string[]): Promise<void> {
+        const promises = [];
 
-        img.onload = () => {
-            this.loading1 = false;
+        for (const url of urls) {
+            promises.push(this.preloadImage(url));
+        }
+        
+        return Promise.all(promises).then(() => {
+            // console.log("preloaded images");
+        });
+    }
 
-            if (!this.loading1 && !this.loading2) {
-                this.loading = false;
-            }
-            
-            console.log("background loaded 1");
-        };
+    public preloadImage(url: string): Promise<void> {
+        return new Promise((resolve) => {
+            const _img = new Image();
 
-        img2.onload = () => {
-            this.loading2 = false;
+            _img.onload = () => {
+                // console.log('loaded', url);
+                resolve();
+            };
 
-            if (!this.loading1 && !this.loading2) {
-                this.loading = false;
-            }
-            
-            console.log("background loaded 2");
-        };
-
-        img.src = url;
-        img2.src = url2;
-
-        this.init();
+            _img.onerror = (error) => {
+                console.error('error', error, url);
+                resolve();
+            };
+    
+            _img.src = url;
+        });
     }
 
     init() {
-        this.eyeses.push({
-            initRatio: .2,
-            afterRatio: .7,
-            gitter: .5,
-            extraClass: 'slow',
-            extraClassAfter: 'slow-after',
-            open: false
+        this.crying.nativeElement.currentTime = 0;
+        this.crying.nativeElement.volume = .3;
+        this.crying.nativeElement.play();
+
+        this.heartbeat.nativeElement.currentTime = 0;
+        // this.heartbeat.nativeElement.volume = .3;
+        this.heartbeat.nativeElement.play();
+
+        this.mainEyeses = [];
+        this.mainEyeses.push({
+            classStr: 'test',
+
+            open: false,
+
+            maxGitter: .5,
+            minGitter: .25,
+
+            stutterChance: 7,
+            maxStutter: 20,
+            minStutter: 15,
+
+            minOpacity: .5,
+            maxOpacity: .75,
+            stillOpacity: 1,
+            opacityChance: 3,
+
+            width: 40,
         });
 
-        console.log(this.eyeses);
+
+        this.mainEyeses.push({
+            classStr: 'test-shade',
+
+            open: false,
+
+            maxGitter: .25,
+            minGitter: 0,
+
+            stutterChance: 5,
+            maxStutter: 25,
+            minStutter: 20,
+
+            minOpacity: 0,
+            maxOpacity: .3,
+            stillOpacity: 0,
+            opacityChance: 0,
+
+            width: 40,
+            colorChance: 10,
+        });
+
+        this.eyeses = [];
 
         setTimeout(() => {
             this.next();
-        }, 3000);
+        }, 6000);
     }
 
     next() {
-        this.eyeses = [];
+        this.scream.nativeElement.currentTime = 0;
+        this.scream.nativeElement.play();
 
-        this.eyeses = [
-            {
-                initRatio: 1,
-                afterRatio: 1,
-                gitter: .5,
-                open: true,
-            },
-            {
-                initRatio: 1,
-                afterRatio: 1,
-                gitter: 4,
-                extraClass: 'faded',
-                open: true
-            },
-            {
-                initRatio: 1,
-                afterRatio: 1,
-                gitter: 8,
-                extraClass: 'faded-extra',
-                open: true
-            },
-        ];
+        this.mainEyeses[0].classStr = "test-2";
+        this.mainEyeses[0].open = true;
+        this.mainEyeses[0].minGitter = .25;
+        this.mainEyeses[0].maxGitter = .75;
+        this.mainEyeses[0].minOpacity = .75;
+        this.mainEyeses[0].maxOpacity = 1;
+        this.mainEyeses[0].width = 60;
+        // this.eyeses = [];
 
-        const m = {
-            initRatio: 1,
-            afterRatio: 1.5,
-            gitter: 0,
-            extraClass: 'fast',
-            extraClassAfter: 'fast-after',
-            open: true
-        };
+        this.mainEyeses[1].classStr = "test-2-shade";
+        this.mainEyeses[1].open = true;
+        this.mainEyeses[1].minGitter = .2;
+        this.mainEyeses[1].maxGitter = .75;
+        this.mainEyeses[1].width = 60;
 
-        this.eyeses.push(m);
+        this.mainEyeses.push({
+            classStr: 'test-2-shade',
 
-        // setTimeout(() => {
-        //     debugger;
-        // }, 500);
+            open: true,
+
+            maxGitter: .25,
+            minGitter: 0,
+
+            stutterChance: 20,
+            maxStutter: 25,
+            minStutter: 20,
+
+            minOpacity: .2,
+            maxOpacity: .4,
+            stillOpacity: 0,
+            opacityChance: 10,
+
+            width: 60,
+            colorChance: 3,
+        });
 
         setTimeout(() => {
-            for (let i = 0; i < this.eyeses.length; i++) {
-                const eyes = this.eyeses[i];
+            this.eyeses = [];
 
-                if (eyes === m ) {
-                    this.eyeses.splice(i, 1);
-                }
-            }
-        }, 1000);
+            this.eyeses.push({
+                classStr: 'eyes-8',
+
+                open: true,
+
+                maxGitter: .7,
+                minGitter: .5,
+
+                stutterChance: 3,
+                maxStutter: 5,
+                minStutter: 15,
+
+                minOpacity: .3,
+                maxOpacity: 1,
+                stillOpacity: 0,
+                opacityChance: 9,
+
+                maxOffsetX: 10,
+                minOffsetX: 5,
+                maxOffsetY: 10,
+                minOffsetY: 5,
+
+                width: 80,
+                colorChance: 1,
+            });
+
+
+            setTimeout(() => {
+                this.eyeses.shift();
+                this.addEyesLoop();
+            }, 400);
+        }, (1000 / 24) * 10);
+    }
+
+    public addEyesLoop(): void {
+        if (this.eyeses.length > 5) {
+            return;
+        }
+
+        const seed = Math.floor(Math.random() * 10) + 1;
+        this.eyeses.push({
+            classStr: 'eyes-' + seed,
+
+            open: true,
+
+            maxGitter: .7,
+            minGitter: .5,
+
+            stutterChance: 5,
+            maxStutter: 15,
+            minStutter: 5,
+
+            minOpacity: .1,
+            maxOpacity: Math.random() * 7 / 10 + .1,
+            stillOpacity: 0,
+            opacityChance: 3,
+
+            maxOffsetX: 50 - seed * 10 / 2,
+            minOffsetX: 0,
+            maxOffsetY: 50 - seed * 10 / 2,
+            minOffsetY: 0,
+
+            width: seed * 10,
+            colorChance: 3,
+        });
+
+        setTimeout(() => {
+            this.eyeses.shift();
+        }, 400 + 400 * Math.random());
+
+        this.addEyesTimeout = window.setTimeout(() => {
+            this.addEyesLoop();
+        }, 100 + 800 * Math.random());
     }
 
     ngAfterViewInit() {
-
+        clearTimeout(this.addEyesTimeout);
     }
 }

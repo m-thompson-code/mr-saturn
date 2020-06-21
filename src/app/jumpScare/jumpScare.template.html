@@ -1,15 +1,21 @@
 
-<div #the_box class="js-container">
+<div class="js-container">
     <ng-container *ngIf="!loading">
-        <ng-container *ngFor="let moo of eyeses">
-            <eyes #eyes [box]="the_box" [open]="moo.open" [extraClass]="moo.extraClass" [extraClassAfter]="moo.extraClassAfter" [initRatio]="moo.initRatio" [afterRatio]="moo.afterRatio" [gitter]="moo.gitter"></eyes>
+        <ng-container *ngFor="let eyes of eyeses">
+            <eyes [eyes]="eyes"></eyes>
         </ng-container>
+
+        <ng-container *ngFor="let eyes of mainEyeses">
+            <eyes [eyes]="eyes"></eyes>
+        </ng-container>
+
     </ng-container>
 
     <ng-container *ngIf="loading">
-        <span>Loading . . . </span>
+        <span>Loading . . .</span>
     </ng-container>
 </div>
 
-<div #openEyesPlaceholder class="open-eyes-placeholder">
-</div>
+<audio #scream src="../../assets/jumpScare/scream.mp3"></audio>
+<audio #crying src="../../assets/jumpScare/crying.mp3"></audio>
+<audio #heartbeat src="../../assets/jumpScare/heartbeat.mp3"></audio>

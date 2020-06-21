@@ -12,4 +12,17 @@
     <moo-msg *ngFor="let msg of msgs" [msg]="msg" [box]="box" (destroyMsg)="removeMsg(msg)"></moo-msg>
 
     <mr-saturn *ngFor="let saturn of saturns" [saturn]="saturn"></mr-saturn>
+
+    <moo-jump-scare *ngIf="activeJumpScare"></moo-jump-scare>
+
+    <div class="debugger-input" *ngIf="showChat">
+        <mat-card>
+            <mat-card-content>
+                <mat-form-field class="input">
+                    <input matInput type="text" placeholder="Chat" [value]="chat || ''" (change)="setChat($event)" (keyup.enter)="submitChat()">
+                </mat-form-field>
+                <button (click)="submitChat()" mat-raised-button color="primary">Send</button>
+            </mat-card-content>
+        </mat-card>
+    </div>
 </div>

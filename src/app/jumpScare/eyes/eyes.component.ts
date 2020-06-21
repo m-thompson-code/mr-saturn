@@ -1,7 +1,32 @@
 import { Component, Input, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, NgZone } from '@angular/core';
+import { colorToFilterData } from './colors';
+import { SafeStyle, DomSanitizer } from '@angular/platform-browser';
 
-interface Eye {
+export interface Eyes {
+    classStr: string;
 
+    open: boolean;
+
+    maxGitter?: number;
+    minGitter?: number;
+
+    stutterChance?: number;
+    maxStutter?: number;
+    minStutter?: number;
+
+    minOpacity?: number;
+    maxOpacity?: number;
+    stillOpacity?: number;
+    opacityChance?: number;
+
+    minOffsetX?: number;
+    maxOffsetX?: number;
+    minOffsetY?: number;
+    maxOffsetY?: number;
+
+    width: number;
+
+    colorChance?: number;
 }
 
 @Component({
@@ -9,124 +34,241 @@ interface Eye {
     templateUrl: './eyes.template.html',
     styleUrls: ['./eyes.style.scss']
 })
-export class EyesComponent implements OnInit, AfterViewInit, OnDestroy {
-    @Input() box: HTMLDivElement;
-    @ViewChild('img') img: ElementRef;
+export class EyesComponent implements OnInit {
+    private gitterX: number;
+    private gitterY: number;
 
-    deltaX: number;
-    deltaY: number;
+    private stutterX: number;
+    private stutterY: number;
+    
+    public opacity: number;
 
-    gitterTimeout: any;
+    @Input() public eyes: Eyes;
+    @Input() public openChange: boolean;
 
-    imgWidth =  448;
-    imgHeight = 180;
+    public left: string;
+    public top: string;
 
-    @Input() gitter: number;
+    public offsetX: number;
+    public offsetY: number;
 
-    @Input() initRatio: number;
-    @Input() afterRatio: number;
+    public filter?: SafeStyle | string;
 
-    @Input() extraClass: string;
-    @Input() extraClassAfter: string;
-    _extraClassAfter: string;
+    public eyePngIndex: number;
+    public eyePng: string;
 
-    width: number = 0;
-    height: number = 0;
-
-    eyes: Eye[];
-
-    offsetX: number = 0;
-    offsetY: number = 0;
-
-    maxDeltaX: number = 0;
-    maxDeltaY: number = 0;
-
-    @Input() open: boolean;
-
-    constructor(private ref: ChangeDetectorRef, private ngZone: NgZone) {
+    constructor(private ref: ChangeDetectorRef, private ngZone: NgZone, private domSanitizer: DomSanitizer) {
 
     }
 
     ngOnInit() {
-        this.deltaX = 0;
-        this.deltaY = 0;
+        this.eyes.maxGitter = this.eyes.maxGitter || 0;
+        this.eyes.minGitter = this.eyes.minGitter || 0;
+        this.gitterX = this.gitterX || 0;
+        this.gitterY = this.gitterY || 0;
 
-        this.width = this.initRatio * this.imgWidth;
-        this.height = this.initRatio * this.imgHeight;
+        this.eyes.maxStutter = this.eyes.maxStutter || 0;
+        this.eyes.minStutter = this.eyes.minStutter || 0;
+        this.stutterX = this.stutterX || 0;
+        this.stutterY = this.stutterY || 0;
 
-        this.gitterFunc();
+        if (this.eyes.minGitter || this.eyes.maxGitter) {
+            this.gitterFunc();
+        }
+
+        this.eyes.stutterChance = this.eyes.stutterChance || 0;
+
+        if (this.eyes.minStutter || this.eyes.maxStutter) {
+            this.stutterFunc();
+        }
+
+        this.eyes.stillOpacity = this.eyes.stillOpacity || 0;
+        this.opacity = this.eyes.stillOpacity || this.eyes.maxOpacity || 1;
+
+        if (this.eyes.minOpacity || this.eyes.maxOpacity) {
+            this.opacityFunc();
+        }
+
+        this.eyes.maxOffsetX = this.eyes.maxOffsetX || 0;
+        this.eyes.minOffsetX = this.eyes.minOffsetX || 0;
+        this.eyes.maxOffsetY = this.eyes.maxOffsetY || 0;
+        this.eyes.minOffsetY = this.eyes.minOffsetY || 0;
+
+        this.offsetFunc();
+
+        this.eyes.colorChance = this.eyes.colorChance || 0;
+
+        if (this.eyes.colorChance) {
+            this.colorFunc();
+        }
+
+        this._updatePosition();
+
+        if (this.eyes.open) {
+            this.eyePngIndex = 7;
+
+            const seed = Math.floor(Math.random() * 7);
+
+            if (seed === 0) {
+                this.eyePngIndex = 1;
+            }
+        } else {
+            this.eyePngIndex = 1;
+        }
+
+        this.animateEyes();
+    }
+
+    public gitterFunc(): void {
+        this.gitterX = this._getRand(this.eyes.minGitter, this.eyes.maxGitter) - this._getRand(this.eyes.minGitter, this.eyes.maxGitter);
+        this.gitterY = this._getRand(this.eyes.minGitter, this.eyes.maxGitter) - this._getRand(this.eyes.minGitter, this.eyes.maxGitter);
+
+        this._updatePosition();
+
+        setTimeout(() => {
+            this.gitterFunc();
+        }, 50);
+    }
+
+    public stutterFunc(): void {
+        const _seed = Math.floor(Math.random() * this.eyes.stutterChance);
+
+        if (_seed !== 0) {
+            this.stutterX = 0;
+            this.stutterY = 0;
+        } else {
+            this.stutterX = this._getRand(this.eyes.minStutter, this.eyes.maxStutter) - this._getRand(this.eyes.minStutter, this.eyes.maxStutter);
+            this.stutterY = this._getRand(this.eyes.minStutter, this.eyes.maxStutter) - this._getRand(this.eyes.minStutter, this.eyes.maxStutter);
+        }
+
+        this._updatePosition();
+
+        setTimeout(() => {
+            this.stutterFunc();
+        }, 120);
+    }
+    
+    public opacityFunc(): void {
+        const _seed = Math.floor(Math.random() * this.eyes.opacityChance);
+
+        if (_seed !== 0) {
+            this.opacity = this.eyes.stillOpacity || this.opacity;
+        } else {
+            this.opacity = this._getRand(this.eyes.minOpacity, this.eyes.maxOpacity);
+        }
+
+        this._updatePosition();
+
+        setTimeout(() => {
+            this.opacityFunc();
+        }, 180);
+    }
+
+    public offsetFunc(): void {
+        this.offsetX = this._getRand(this.eyes.minOffsetX, this.eyes.maxOffsetX) - this._getRand(this.eyes.minOffsetX, this.eyes.maxOffsetX);
+        this.offsetY = this._getRand(this.eyes.minOffsetY, this.eyes.maxOffsetY) - this._getRand(this.eyes.minOffsetY, this.eyes.maxOffsetY);
+    }
+
+    public colorFunc(): void {
+        const _seed = Math.floor(Math.random() * this.eyes.colorChance);
+
+        if (_seed === 0) {
+            const _red = Math.floor(Math.random() * 24) + 10;
+            const _green = Math.floor(Math.random() * 24) + 10;
+            const _blue = Math.floor(Math.random() * 24) + 10;
+            const _f = colorToFilterData(`#${_red}${_green}${_blue}`).result.filter;
+
+            let __f = _f.substring(8, _f.length -1);
+    
+            this.filter = this.domSanitizer.bypassSecurityTrustStyle(__f);
+        } else {
+            this.filter = "none";
+        }
+        
+        setTimeout(() => {
+            this.colorFunc();
+        }, 300);
+    }
+
+    private _getRand(min: number, max: number): number {
+        return Math.random() * (max - min) + min;
+    }
+
+    private _updatePosition(): void {
+        let left = 50 + this.gitterX + this.stutterX + this.offsetX;
+        let top = 50 + this.gitterY + this.stutterY + this.offsetY;
+
+        const min = 50 - this.eyes.width / 2;
+
+        if (left < min) {
+            left = min;
+        } else if (left > min + this.eyes.width) {
+            left = min + this.eyes.width;
+        }
+
+        if (top < 25) {
+            top = 25;
+        } else if (top > 75) {
+            top = 75;
+        }
+
+        this.left = `${left}%`;
+        this.top = `${top}%`;
     }
 
     ngAfterViewInit() {
-        this.ref.detectChanges();
-        // debugger;
+        
+    }
+
+    public updateEyeIndex(): void {
+        if (this.eyes.open) {
+            this.eyePngIndex += 1;
+
+            if (this.eyePngIndex > 10) {
+                const seed = Math.floor(Math.random() * 7);
+
+                if (seed  === 0) {
+                    this.eyePngIndex = 1;
+                } else if (seed < 4) {
+                    this.eyePngIndex = 7;
+                } else {
+                    this.eyePngIndex = 8;
+                }
+            }
+        } else {
+            const seed = Math.floor(Math.random() * 14);
+
+            if (seed === 0) {
+                this.eyePngIndex = 2;
+            } else if (seed === 1) {
+                this.eyePngIndex = 3;
+            } else {
+                this.eyePngIndex = 1;
+            }
+        }
+    }
+
+    public animateEyes(): void {
+        this.updateEyeIndex();
+
+        if (this.eyePngIndex === 10) {
+            this.eyePng = 'eyes_10.png';
+        } else {
+            this.eyePng = `eyes_0${this.eyePngIndex}.png`;
+        }
+
+        let delay = 1000 / 24;
+
+        if (this.eyePngIndex > 7) {
+            delay = 200;
+        }
+
         setTimeout(() => {
-
-            this.ngZone.run(() => {
-                // const width = this.afterRatio * this.imgWidth;
-                // const height = this.afterRatio * this.imgHeight;
-
-                this.width = this.afterRatio * this.imgWidth;
-                this.height = this.afterRatio * this.imgHeight;
-
-                this.maxDeltaX = this.box.offsetWidth / 2 - this.width / 2;
-                this.maxDeltaY = this.box.offsetHeight / 2 - this.height / 2;
-
-                // this.offsetX = -this.maxDeltaX;
-                // this.offsetY = -this.maxDeltaY;
-
-                this._extraClassAfter = this.extraClassAfter;
-
-                this.ref.detectChanges();
-            });
-        }, 1);
+            this.animateEyes();
+        }, delay);
     }
 
-    getRand() {
-        const x = Math.random() * this.gitter * 2 - this.gitter;
-        const y = Math.random() * this.gitter * 2 - this.gitter;
-
-        this.deltaX = x;
-        this.deltaY = y;
-    }
-
-    getX() {
-        let x = Math.random() * this.gitter * 2 - this.gitter;
-
-        x += this.offsetX;
-
-        if (x > this.maxDeltaX) {
-            x = this.maxDeltaX;
-        } else if (x < -this.maxDeltaX) {
-            x = -this.maxDeltaX;
-        }
-
-        return x;
-    }
-
-    getY() {
-        let y = Math.random() * this.gitter * 2 - this.gitter;
-
-        y += this.offsetY;
-
-        if (y > this.maxDeltaY) {
-            y = this.maxDeltaY;
-        } else if (y < -this.maxDeltaY) {
-            y = -this.maxDeltaY;
-        }
-
-        return y;
-    }
-
-    gitterFunc() {
-        this.getRand();
-
-        this.gitterTimeout = setTimeout(() => {
-            this.gitterFunc();
-        }, 100);
-    }
-
-    ngOnDestroy() {
-        clearTimeout(this.gitterTimeout);
-    }
+    // ngOnDestroy() {
+    //     clearTimeout(this.gitterTimeout);
+    // }
 }

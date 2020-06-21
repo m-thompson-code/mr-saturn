@@ -30,10 +30,13 @@ import { MonaLisaComponent } from './video_overlay/mona_lisa/mona_lisa.component
 import { OlivesComponent } from './video_overlay/olives/olives.component';
 import { OliveComponent } from './video_overlay/olives/olive/olive.component';
 
+import { DirectivesModule } from './directives/directives.module';
+
 import * as firebase from 'firebase/app';
 
 import "firebase/firestore";
 import "firebase/auth";
+
 import { AuthService } from './auth.service';
 
 // Initialize Firebase
@@ -49,7 +52,6 @@ var firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-// firebase.analytics();
 
 @NgModule({
   declarations: [
@@ -80,7 +82,9 @@ firebase.initializeApp(firebaseConfig);
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+
+    DirectivesModule,
   ],
   providers: [
     AuthService

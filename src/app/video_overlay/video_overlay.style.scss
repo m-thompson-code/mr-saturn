@@ -40,3 +40,35 @@
         transition: all 1s;    
     }
 }
+
+.debugger-input {
+    position: fixed;
+    padding: 24px;
+    width: 80vw;
+    bottom: 0;
+    left: 10vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    opacity: .2;
+
+    mat-card {
+        flex-grow: 2;
+
+        mat-card-content {
+            display: flex;
+
+            mat-form-field {
+                flex-grow: 2;
+            }
+
+            button {
+                margin-left: 24px;
+            }
+        }
+    }
+}
+.debugger-input:hover {
+    opacity: 1;
+}

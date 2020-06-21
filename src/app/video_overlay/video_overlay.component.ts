@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import * as firebase from 'firebase/app';
 import { MonaLisaComponent } from './mona_lisa/mona_lisa.component';
 import { OlivesComponent } from './olives/olives.component';
@@ -23,6 +23,8 @@ export class Saturn {
     yy: number;
 
     destroyed: boolean;
+
+    moveTimeout?: number;
 
     constructor(public maxWidth: number, public maxHeight: number, public onDestroy?: (saturn?: Saturn)=>any) {
         this.moving = false;
@@ -94,12 +96,14 @@ export class Saturn {
             }
         }
 
-        setTimeout(() => {
+        this.moveTimeout = window.setTimeout(() => {
             this.move();
         }, 1);
     }
 
     destroy() {
+        clearTimeout(this.moveTimeout);
+
         this.destroyed = true;
         this.moving = false;
 
@@ -129,6 +133,8 @@ export interface Settings {
     additionalSaturns: number;
     loopCount: number;
     saturnsLimit: number;
+
+    jumpScareTimestamp: number;
 }
 
 export interface SaturnData {
@@ -141,33 +147,7 @@ export interface SaturnData {
     templateUrl: './video_overlay.template.html',
     styleUrls: ['./video_overlay.style.scss']
 })
-export class VideoOverlayComponent implements OnInit, AfterViewInit {
-    player1: HTMLAudioElement;
-    player2: HTMLAudioElement;
-    player3: HTMLAudioElement;
-    cheer: HTMLAudioElement;
-
-    @ViewChild('mr_saturn_sfx_1') set playerRef1(ref: ElementRef<HTMLAudioElement>) {
-        if (ref && ref.nativeElement) {
-            this.player1 = ref.nativeElement;
-        }
-    }
-    @ViewChild('mr_saturn_sfx_2') set playerRef2(ref: ElementRef<HTMLAudioElement>) {
-        if (ref && ref.nativeElement) {
-            this.player2 = ref.nativeElement;
-        }
-    }
-    @ViewChild('mr_saturn_sfx_3') set playerRef3(ref: ElementRef<HTMLAudioElement>) {
-        if (ref && ref.nativeElement) {
-            this.player3 = ref.nativeElement;
-        }
-    }
-    @ViewChild('cheer') set cheerRef(ref: ElementRef<HTMLAudioElement>) {
-        if (ref && ref.nativeElement) {
-            this.cheer = ref.nativeElement;
-        }
-    }
-
+export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('monaLisa') monaLisa: MonaLisaComponent;
     @ViewChild('olives') olives: OlivesComponent;
 
@@ -187,18 +167,36 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
     loopSaturns: Saturn[];
     msgs: Msg[];
 
-    milkManTimeout: any;//NodeJS.Timer;
+    milkManTimeout: number;
+    jumpScareTimeout: number;
 
     activeMilkMan: boolean = false;
+    activeJumpScare: boolean = false;
 
     dark: boolean;
 
     saturnStack: SaturnData[] = [];
 
+    chat: string;
+    showChat: boolean;
+
     constructor() {
     }
 
     ngOnInit() {
+        (window as any).command = (msg: string) => {
+            this.handleCommand(msg, {mod: false, subscriber: false});
+        };
+
+        (window as any).chat = () => {
+            this.showChat = true;
+        };
+
+        (window as any).dark = () => {
+            this.dark = true;
+            localStorage.setItem('dark', '1');
+        };
+
         try {
             if (localStorage.getItem('dark')) {
                 this.dark = true;
@@ -222,6 +220,8 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
             additionalSaturns: 0,
             loopCount: 0,
             saturnsLimit: 5,
+
+            jumpScareTimestamp: 0,
         }
     }
 
@@ -243,6 +243,8 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                     additionalSaturns: doc.additionalSaturns || 0,
                     loopCount: doc.loopCount || 0,
                     saturnsLimit: doc.saturnsLimit || 0,
+
+                    jumpScareTimestamp: doc.jumpScareTimestamp || 0,
                 }
 
                 if (doc.loopCount) {
@@ -267,7 +269,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
 
             const doc = docSnapshot.data() as TwitchCommand;
 
-            console.log("Current data: ", docSnapshot.data());
+            // console.log("Current data: ", docSnapshot.data());
 
             if (doc.username.toLowerCase() === 'streamlabs') {
                 if (doc.msg.indexOf('raided') !== -1 || doc.msg.indexOf('cheer') !== -1 || doc.msg.indexOf('following') !== -1 || doc.msg.indexOf('hosted') !== -1 || doc.msg.indexOf('subscribed') !== -1) {
@@ -276,86 +278,103 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                 return;
             }
 
-            const msg = (doc.msg || '').trim();
-            const _msg = msg.toLowerCase();
+            doc.context
 
-            const context = doc && doc.context;
-            // Handle commands
+            this.handleCommand(doc.msg || '', doc.context);
+        });
+    }
 
-            const commands = _msg.split(' ');
+    // context: ChatUserstate
+    public handleCommand(msg: string, context: {mod?: boolean, subscriber?: boolean}): void {
+        const _msg = (msg || "").trim().toLowerCase();
 
-            for (let i = 0; i < commands.length; i++) {
-                const command = commands[i] || "";
-                const next = commands[i + 1] || "";
+        // const context = doc && doc.context;
+        // Handle commands
 
-                // Olives
-                if (this.settings.allowOlives && command.includes('olive')) {
-                    let oliveCount = 1;
+        const commands = _msg.split(' ');
 
-                    if (context && /x[0-9]+/.test(next)) {
-                        console.log(next);
-                        oliveCount = +next.slice(1) || 0;
+        if (_msg === 'clear olives') {
+            // console.log("cleared olives");
+            this.olives.clearOlives();
+            return;
+        }
 
-                        if (context) {
-                            if (context.mod) {
-                                // No limit
-                            } else if (context.subscriber) {
-                                if (oliveCount > 99) {
-                                    oliveCount = 99;
-                                }
-                            } else {
-                                if (oliveCount > 9) {
-                                    oliveCount = 9;
-                                }
+        if (_msg === 'jumpscare') {
+            this.activateJumpScare();
+            return;
+        }
+
+        for (let i = 0; i < commands.length; i++) {
+            const command = commands[i] || "";
+            const next = commands[i + 1] || "";
+
+            // Olives
+            if (this.settings.allowOlives && command.includes('olive')) {
+                let oliveCount = 1;
+
+                if (context && /x[0-9]+/.test(next)) {
+                    // console.log(next);
+                    oliveCount = +next.slice(1) || 0;
+
+                    if (context) {
+                        if (context.mod) {
+                            // No limit
+                        } else if (context.subscriber) {
+                            if (oliveCount > 99) {
+                                oliveCount = 99;
                             }
                         } else {
                             if (oliveCount > 9) {
                                 oliveCount = 9;
                             }
                         }
+                    } else {
+                        if (oliveCount > 9) {
+                            oliveCount = 9;
+                        }
                     }
-
-                    this.olives.pushOlives(oliveCount);
-                    break;
-                // Facehugger
-                } else if (this.settings && (command === 'art' || command === 'face' || command === 'hugger' || command === 'facehugger' || command === 'mona' || command === 'lisa' || command === 'monalisa')) {
-                    this.activateMonaLisa();
-                    break;
-                } 
-                // Milk
-                else if (this.settings.allowMilkman && command.includes('milk')) {
-                    this.activateMilkMan();
-                    break;
                 }
-            }
 
-            let seed = 0;
-            if (this.settings.allowRandomSprites) {
-                for (let char of _msg) {
-                    seed += char.charCodeAt(0);
-                }
-                seed = seed % 52 + 1;
+                this.olives.pushOlives(oliveCount);
+                break;
+            // Facehugger
+            } else if (this.settings && (command === 'art' || command === 'face' || command === 'hugger' || command === 'facehugger' || command === 'mona' || command === 'lisa' || command === 'monalisa')) {
+                this.activateMonaLisa();
+                break;
+            } 
+            // Milk
+            else if (this.settings.allowMilkman && command.includes('milk')) {
+                this.activateMilkMan();
+                break;
             }
-            
-            let override = `assets/sprites/${seed}.gif`;
+        }
 
-            if (this.settings.allowMsgsFromChat && msg.length < 50) {
-                this.createSaturn(msg, override);
-            } else {
-                this.createSaturn("", override);
+        let seed = 0;
+        if (this.settings.allowRandomSprites) {
+            for (let char of _msg) {
+                seed += char.charCodeAt(0);
             }
+            seed = seed % 52 + 1;
+        }
+        
+        let override = `assets/sprites/${seed}.gif`;
 
-            // Create extra saturns for longer messages
-            for (let i = 0; i < Math.floor((msg.length / 30)); i++) {
+        if (this.settings.allowMsgsFromChat && _msg.length < 50) {
+            this.createSaturn(msg, override);
+        } else {
+            this.createSaturn("", override);
+        }
+
+        // Create extra saturns for longer messages
+        for (let i = 0; i < Math.floor((_msg.length / 30)); i++) {
+            this.createSaturn();
+        }
+
+        if (this.settings.additionalSaturns) {
+            for (let i = 0; i < this.settings.additionalSaturns; i++) {
                 this.createSaturn();
             }
-
-            if (this.settings.additionalSaturns) {
-                for (let i = 0; i < this.settings.additionalSaturns; i++) {
-                    this.createSaturn();
-                }
-            }
-        });
+        }
     }
 
     ngAfterViewInit() {
@@ -373,9 +392,19 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
         
         this.activeMilkMan = true;
 
-        this.milkManTimeout = setTimeout(() => {
+        this.milkManTimeout = window.setTimeout(() => {
             this.activeMilkMan = false;
         }, 2600);
+    }
+
+    public activateJumpScare(): void {
+        clearTimeout(this.jumpScareTimeout);
+        
+        this.activeJumpScare = true;
+
+        this.jumpScareTimeout = window.setTimeout(() => {
+            this.activeJumpScare = false;
+        }, 15 * 1000);
     }
 
     activateMonaLisa() {
@@ -416,7 +445,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
     }
 
     createSaturn(msgText?: string, override?: string) {
-        console.log(msgText);
+        // console.log(msgText);
         
         const maxHeight = (this.box && this.box.offsetHeight || 100) - 42;// 42 pixels for the size of the sprite
         const maxWidth = this.box && this.box.offsetWidth || 100;
@@ -440,9 +469,9 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
             this.sendSaturns();
         }, 200);
 
-        if (this.saturnStack.length) {
-            console.log("sendSaturns stack size", this.saturnStack.length);
-        }
+        // if (this.saturnStack.length) {
+        //     console.log("sendSaturns stack size", this.saturnStack.length);
+        // }
 
         if (!this.saturnStack.length || this.saturns.length >= this.settings.saturnsLimit) {
             return;
@@ -484,5 +513,20 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit {
                 break;
             }
         }
+    }
+
+    public setChat(event: any): void {
+        // console.log(event.target.value);
+        this.chat = "" + event.target.value;
+    }
+
+    public submitChat(): void {
+        this.handleCommand(this.chat, {mod: false, subscriber: false});
+        this.chat = "";
+    }
+
+    public ngOnDestroy(): void {
+        clearTimeout(this.milkManTimeout);
+        clearTimeout(this.jumpScareTimeout);
     }
 }

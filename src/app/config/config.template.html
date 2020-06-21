@@ -5,16 +5,16 @@
                 <h2 class="h2">Settings</h2>
                 <section class="section">
                     <mat-form-field class="input">
-                        <input matInput type="email" placeholder="'Email'" [value]="email || ''" (change)="setEmail($event)">
+                        <input matInput type="email" placeholder="Email" [value]="email || ''" (change)="setEmail($event)">
                     </mat-form-field>
                 </section>
 
                 <section class="section">
                     <mat-form-field class="input">
-                        <input matInput type="password" placeholder="'Password'" [value]="password || ''" (change)="setPassword($event)">
+                        <input matInput type="password" placeholder="Password" [value]="password || ''" (change)="setPassword($event)">
                     </mat-form-field>
                 </section>
-            </mat-card-content>      
+            </mat-card-content>
 
             <section>
                 <button [style.margin-right]="'16px'" (click)="signIn()" mat-raised-button color="primary" [disabled]="saving">Sign In</button>
