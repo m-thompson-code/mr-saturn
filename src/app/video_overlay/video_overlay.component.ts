@@ -4,6 +4,8 @@ import { MonaLisaComponent } from './mona_lisa/mona_lisa.component';
 import { OlivesComponent } from './olives/olives.component';
 
 import { ChatUserstate } from 'tmi.js';
+import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
+import { AuthService } from '../auth.service';
 
 interface TwitchCommand {
     msg: string;
@@ -180,7 +182,12 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
     chat: string;
     showChat: boolean;
 
-    constructor() {
+    iframeSrc?: SafeUrl;
+    imgSrc?: SafeUrl;
+
+    mockTwitterContext?: ChatUserstate;
+
+    constructor(private domSanitizer: DomSanitizer, private authService: AuthService) {
     }
 
     ngOnInit() {
@@ -190,6 +197,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
         (window as any).chat = () => {
             this.showChat = true;
+            localStorage.setItem('chat', '1');
         };
 
         (window as any).dark = () => {
@@ -200,6 +208,10 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
             if (localStorage.getItem('dark')) {
                 this.dark = true;
+            }
+
+            if (localStorage.getItem('dark')) {
+                this.showChat = true;
             }
         }catch(error) {
             console.error(error);
@@ -228,7 +240,6 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
     initListeners() {
         firebase.firestore().collection("saturns").doc('settings').onSnapshot(docSnapshot => {
             const doc = docSnapshot.data() as Settings;
-
 
             if (doc) {
                 this.settings = {
@@ -299,9 +310,54 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
 
-        if (_msg === 'jumpscare') {
-            this.activateJumpScare();
-            return;
+        const now = Date.now();
+
+        if (context && (context.mod || context['user-id'] === '36547695')) {
+            if (_msg === 'force jumpscare') {
+                this.activateJumpScare();
+                return;
+            }
+
+            if (_msg.startsWith('iframe ')) {
+                const _url = _msg.split('iframe ')[1].trim();
+
+                if (!_url || _url === 'clear') {
+                    this.iframeSrc = undefined;
+                } else {
+                    this.iframeSrc = this.domSanitizer.bypassSecurityTrustResourceUrl(_url);
+                }
+
+                this.imgSrc = undefined;
+                
+                return;
+            }
+
+            if (_msg.startsWith('img ')) {
+                const _url = _msg.split('img ')[1].trim();
+
+                if (!_url || _url === 'clear') {
+                    this.imgSrc = undefined;
+                } else {
+                    this.imgSrc = this.domSanitizer.bypassSecurityTrustResourceUrl(_url);
+                }
+
+                this.iframeSrc = undefined;
+
+                
+                return;
+            }
+        }
+
+        // Time limit is handled by server for jump scare
+        if (this.settings.jumpScareTimestamp && this.settings.jumpScareTimestamp < now) {
+            for (let i = 0; i < commands.length; i++) {
+                const command = commands[i];
+
+                if (command === 'hate' || command === 'help' || command === 'dislike' || command === "don't" || command === "never" || command === "heart") {
+                    this.activateJumpScare();
+                    return;
+                }
+            }
         }
 
         for (let i = 0; i < commands.length; i++) {
@@ -385,6 +441,19 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
         this.createSaturn();
 
         this.sendSaturns();
+
+        if (this.authService.user) {
+            console.log(this.authService.user);
+            firebase.firestore().collection("contexts").doc(this.authService.user.uid).get().then(snapshot => {
+                if (snapshot.exists) {
+                    const data = snapshot.data();
+                    console.log(data);
+                    if (data) {
+                        this.mockTwitterContext = data;
+                    }
+                }
+            })
+        }
     }
 
     activateMilkMan() {
@@ -521,8 +590,22 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public submitChat(): void {
-        this.handleCommand(this.chat, {mod: false, subscriber: false});
+        this.handleCommand(this.chat, {mod: true, subscriber: true});
         this.chat = "";
+    }
+
+    public storeMsgInDatabase(): Promise<void> {
+        return firebase.firestore().collection("saturns").doc('chat').set({
+            timestamp: Date.now(),
+            msg: this.chat || "",
+            'display-name': this.mockTwitterContext && this.mockTwitterContext['display-name'] || 'unknown display-name',
+            username: this.mockTwitterContext && this.mockTwitterContext.username || 'unknown username',
+            context: this.mockTwitterContext || null,
+        }).then(() => {
+            this.chat = "";
+        }).catch(error => {
+            console.error(error);
+        });
     }
 
     public ngOnDestroy(): void {

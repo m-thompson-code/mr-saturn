@@ -70,7 +70,7 @@ export class OlivesComponent implements OnInit {
     }
 
     pushOlive() {
-        console.log('pushing');
+        // console.log('pushing');
 
         if (this.containers && this.containers.length > 100) {
             // exit early so we don't lag out lol

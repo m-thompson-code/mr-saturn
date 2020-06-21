@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Eyes } from './eyes/eyes.component';
 
 @Component({
@@ -6,7 +6,7 @@ import { Eyes } from './eyes/eyes.component';
     templateUrl: './jumpScare.template.html',
     styleUrls: ['./jumpScare.style.scss']
 })
-export class JumpScareComponent implements OnInit, AfterViewInit {
+export class JumpScareComponent implements OnInit, AfterViewInit, OnDestroy {
     // @ViewChild("openEyesPlaceholder", {static: true}) openEyesPlaceholder: ElementRef;
     @ViewChild("crying", {static: true}) crying: ElementRef<HTMLMediaElement>;
     @ViewChild("scream", {static: true}) scream: ElementRef<HTMLMediaElement>;
@@ -23,10 +23,12 @@ export class JumpScareComponent implements OnInit, AfterViewInit {
 
     addEyesTimeout?: number;
 
+    fadeOut: boolean;
+
     constructor() {
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         const imageUrls = [
             '../../../assets/jumpScare/eyes/eyes_01.png',
             '../../../assets/jumpScare/eyes/eyes_02.png',
@@ -47,6 +49,42 @@ export class JumpScareComponent implements OnInit, AfterViewInit {
 
             this.init();
         });
+    }
+
+    public ngAfterViewInit() {
+        setTimeout(() => {
+            this.fadeOut = true;
+
+            this.mainEyeses.push({
+                classStr: 'eyes-10',
+    
+                open: true,
+    
+                maxGitter: 0,
+                minGitter: 0,
+    
+                stutterChance: 1000,
+                maxStutter: 0,
+                minStutter: 0,
+    
+                minOpacity: 1,
+                maxOpacity: 1,
+                stillOpacity: 1,
+                opacityChance: 1000,
+    
+                width: 100,
+                colorChance: 5,
+            });
+
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const eyes = this.getBackgroundEyes();
+    
+                    this.mainEyeses.push(eyes);
+                }, 500 + 600 * i);
+            }
+            
+        }, 12 * 1000);
     }
 
     public preloadImages(urls: string[]): Promise<void> {
@@ -81,11 +119,11 @@ export class JumpScareComponent implements OnInit, AfterViewInit {
 
     init() {
         this.crying.nativeElement.currentTime = 0;
-        this.crying.nativeElement.volume = .3;
+        this.crying.nativeElement.volume = .15;
         this.crying.nativeElement.play();
 
         this.heartbeat.nativeElement.currentTime = 0;
-        // this.heartbeat.nativeElement.volume = .3;
+        this.heartbeat.nativeElement.volume = .5;
         this.heartbeat.nativeElement.play();
 
         this.mainEyeses = [];
@@ -140,6 +178,7 @@ export class JumpScareComponent implements OnInit, AfterViewInit {
 
     next() {
         this.scream.nativeElement.currentTime = 0;
+        this.scream.nativeElement.volume = .5;
         this.scream.nativeElement.play();
 
         this.mainEyeses[0].classStr = "test-2";
@@ -215,13 +254,10 @@ export class JumpScareComponent implements OnInit, AfterViewInit {
         }, (1000 / 24) * 10);
     }
 
-    public addEyesLoop(): void {
-        if (this.eyeses.length > 5) {
-            return;
-        }
-
+    public getBackgroundEyes(): Eyes {
         const seed = Math.floor(Math.random() * 10) + 1;
-        this.eyeses.push({
+
+        return {
             classStr: 'eyes-' + seed,
 
             open: true,
@@ -245,7 +281,17 @@ export class JumpScareComponent implements OnInit, AfterViewInit {
 
             width: seed * 10,
             colorChance: 3,
-        });
+        };
+    }
+
+    public addEyesLoop(): void {
+        if (this.eyeses.length > 5) {
+            return;
+        }
+
+        const eyes = this.getBackgroundEyes();
+
+        this.eyeses.push(eyes);
 
         setTimeout(() => {
             this.eyeses.shift();
@@ -256,7 +302,7 @@ export class JumpScareComponent implements OnInit, AfterViewInit {
         }, 100 + 800 * Math.random());
     }
 
-    ngAfterViewInit() {
+    public ngOnDestroy(): void {
         clearTimeout(this.addEyesTimeout);
     }
 }

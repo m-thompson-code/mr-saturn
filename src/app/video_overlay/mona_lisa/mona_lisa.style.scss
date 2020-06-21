@@ -10,6 +10,9 @@
         display: block;
         height: 179px;
     }
+
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .spin-in {

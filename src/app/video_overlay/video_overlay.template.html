@@ -3,6 +3,14 @@
 </audio>
 
 <div id="box" [class]="dark ? 'dark-theme' : ''" #the_box>
+    <iframe *ngIf="iframeSrc" [src]="iframeSrc">
+
+    </iframe>
+
+    <div *ngIf="imgSrc" class="img-container">
+        <img [src]="imgSrc" class="responsive-image">
+    </div>
+
     <milk-man [active]="activeMilkMan"></milk-man>
     <mona-lisa #monaLisa></mona-lisa>
 
@@ -22,6 +30,7 @@
                     <input matInput type="text" placeholder="Chat" [value]="chat || ''" (change)="setChat($event)" (keyup.enter)="submitChat()">
                 </mat-form-field>
                 <button (click)="submitChat()" mat-raised-button color="primary">Send</button>
+                <button (click)="storeMsgInDatabase()" mat-raised-button color="primary">Announce</button>
             </mat-card-content>
         </mat-card>
     </div>

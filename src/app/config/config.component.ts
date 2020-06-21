@@ -8,20 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 
 import { AuthService } from '../auth.service';
-
-export interface FormSettings {
-    font: 'random' | 'normal' | 'boing' | 'lumine hall';
-    allowMsgsFromChat: boolean;
-    allowMilkman: boolean;
-    allowMonaLisa: boolean;
-    allowOlives: boolean;
-    allowRandomSprites: boolean;
-    loopRandomSprites: boolean;
-    
-    additionalSaturns: number;
-    loopCount: number;
-    saturnsLimit: number;
-}
+import { Settings } from '../video_overlay/video_overlay.component';
 
 type FontOption = 'Random' | 'Normal' | 'Mr. Saturn Boing' | 'Lumine Hall';
 
@@ -31,7 +18,7 @@ type FontOption = 'Random' | 'Normal' | 'Mr. Saturn Boing' | 'Lumine Hall';
     styleUrls: ['./config.style.scss']
 })
 export class ConfigComponent implements OnInit {
-    settings: FormSettings;
+    settings: Settings;
 
     // volumeStepperValue: number;
 
@@ -55,7 +42,7 @@ export class ConfigComponent implements OnInit {
 
     ngOnInit() {
         firebase.firestore().collection("saturns").doc('settings').get().then(docSnapshot => {
-            const doc = (docSnapshot.data() || {}) as FormSettings;
+            const doc = (docSnapshot.data() || {}) as Settings;
 
             this.settings = {
                 font: doc.font || 'normal',
@@ -68,7 +55,8 @@ export class ConfigComponent implements OnInit {
                 additionalSaturns: doc.additionalSaturns || 0,
                 loopCount: doc.loopCount || 0,
                 saturnsLimit: doc.saturnsLimit || 0,
-            }
+                jumpScareTimestamp: doc.jumpScareTimestamp || 0,
+            };
 
             if (this.settings.font === 'random') {
                 this.fontOption = 'Random';
@@ -79,8 +67,6 @@ export class ConfigComponent implements OnInit {
             } else if (this.settings.font === 'lumine hall') {
                 this.fontOption = 'Lumine Hall';
             }
-
-            // this.volumeStepperValue = (this.settings.volume || 0) * 10;
 
             this.loopCountInputValue = "" + (this.settings.loopCount || 0);
             this.saturnsLimitInputValue = "" + (this.settings.saturnsLimit || 0);

@@ -8,4 +8,10 @@
 
     color: white;
     overflow: hidden;
+
+    transition: opacity 3s;
+    opacity: 1;
+}
+.js-container.fade-out {
+    opacity: 0;
 }

@@ -8,6 +8,9 @@
     align-items: center;
     justify-content: center;
 
+    will-change: transform;
+    transform: translateZ(0);
+
     img {
         display: block;
     }

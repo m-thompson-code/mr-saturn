@@ -2,6 +2,9 @@
     position: absolute;
     display: flex;
 
+    will-change: transform;
+    transform: translateZ(0);
+
     width: 42px;
     height: 42px;
 

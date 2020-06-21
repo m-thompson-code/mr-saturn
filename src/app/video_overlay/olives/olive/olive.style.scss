@@ -3,6 +3,9 @@
     bottom: 0;
     transition: bottom .5s;
 
+    will-change: transform;
+    transform: translateZ(0);
+
     img {
         display: block;
         width: 32px;

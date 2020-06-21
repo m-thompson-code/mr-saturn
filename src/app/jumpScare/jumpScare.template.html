@@ -1,5 +1,5 @@
 
-<div class="js-container">
+<div [class]="'js-container ' + (fadeOut ? 'fade-out' : '')">
     <ng-container *ngIf="!loading">
         <ng-container *ngFor="let eyes of eyeses">
             <eyes [eyes]="eyes"></eyes>
@@ -10,10 +10,10 @@
         </ng-container>
 
     </ng-container>
-
+<!-- 
     <ng-container *ngIf="loading">
         <span>Loading . . .</span>
-    </ng-container>
+    </ng-container> -->
 </div>
 
 <audio #scream src="../../assets/jumpScare/scream.mp3"></audio>

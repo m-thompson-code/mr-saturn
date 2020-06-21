@@ -2,4 +2,7 @@
     position: fixed;
     bottom: 0px;
     right: 50vw;
+
+    will-change: transform;
+    transform: translateZ(0);
 }

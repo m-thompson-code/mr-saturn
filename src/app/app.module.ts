@@ -30,8 +30,6 @@ import { MonaLisaComponent } from './video_overlay/mona_lisa/mona_lisa.component
 import { OlivesComponent } from './video_overlay/olives/olives.component';
 import { OliveComponent } from './video_overlay/olives/olive/olive.component';
 
-import { DirectivesModule } from './directives/directives.module';
-
 import * as firebase from 'firebase/app';
 
 import "firebase/firestore";
@@ -83,8 +81,6 @@ firebase.initializeApp(firebaseConfig);
     MatButtonModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-
-    DirectivesModule,
   ],
   providers: [
     AuthService
