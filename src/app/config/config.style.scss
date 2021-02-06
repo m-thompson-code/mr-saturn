@@ -31,13 +31,9 @@ mat-card {
     }
 }
 
-.volume-slider {
+.slider-container {
     display: flex;
-    align-items: center;
-
-    span {
-        margin-right: 24px;
-    }
+    flex-direction: column;
 
     mat-slider {
         flex-grow: 2;

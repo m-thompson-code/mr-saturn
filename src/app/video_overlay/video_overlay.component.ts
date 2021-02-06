@@ -137,6 +137,9 @@ export interface Settings {
     saturnsLimit: number;
 
     jumpScareTimestamp: number;
+    
+    volume: number;
+    dynamicContentSize: number;
 }
 
 export interface SaturnData {
@@ -238,7 +241,10 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
             saturnsLimit: 5,
 
             jumpScareTimestamp: 0,
-        }
+
+            volume: 0,
+            dynamicContentSize: 1,
+        };
     }
 
     initListeners() {
@@ -260,7 +266,10 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
                     saturnsLimit: doc.saturnsLimit || 0,
 
                     jumpScareTimestamp: doc.jumpScareTimestamp || 0,
-                }
+
+                    volume: 0,
+                    dynamicContentSize: 1,
+                };
 
                 if (doc.loopCount) {
                     if (this.saturnStack.length < doc.loopCount) {

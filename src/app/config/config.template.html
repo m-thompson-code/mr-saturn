@@ -58,7 +58,7 @@
 
                 <section class="section">
                     <mat-form-field class="input">
-                        <input matInput type="number" placeholder="Additional Mr. Saturns per chat message" [value]="additionalSaturnsInputValue || 0" (change)="setAdditionalSaturns($event)">
+                        <input matInput type="number" placeholder="Additional Mr. Saturns per chat message" [value]="additionalSaturnsValue || 0" (change)="setAdditionalSaturns($event)">
                     </mat-form-field>
                 </section>
 
@@ -104,6 +104,36 @@
                     </div>
                 </section>
             </mat-card-content>
+
+            <section>
+                <div class="slider-container">
+                    <div id="volume-label">Volume</div>
+
+                    <mat-slider
+                        [max]="10"
+                        [min]="0"
+                        [thumbLabel]="true"
+                        [step]="0.1"
+                        [value]="volumeStepperValue"
+                        (change)="updateVolume($event)">
+                    </mat-slider>
+                </div>
+            </section>
+
+            <section>
+                <div class="slider-container">
+                    <div id="volume-label">Dynamic Content Size Ratio (img, iframe)</div>
+
+                    <mat-slider
+                        [max]="100"
+                        [min]="0"
+                        [thumbLabel]="true"
+                        [step]="1"
+                        [value]="dynamicContentSizeValue"
+                        (change)="updateDynamicContentSize($event)">
+                    </mat-slider>
+                </div>
+            </section>
 
             <section>
                 <button (click)="save()" mat-raised-button color="primary" [disabled]="saving">Save</button>

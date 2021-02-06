@@ -9,6 +9,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 
 import { AuthService } from '../auth.service';
 import { Settings } from '../video_overlay/video_overlay.component';
+import { MatSliderChange } from '@angular/material/slider';
 
 type FontOption = 'Random' | 'Normal' | 'Mr. Saturn Boing' | 'Lumine Hall';
 
@@ -20,13 +21,12 @@ type FontOption = 'Random' | 'Normal' | 'Mr. Saturn Boing' | 'Lumine Hall';
 export class ConfigComponent implements OnInit {
     settings: Settings;
 
-    // volumeStepperValue: number;
+    volumeStepperValue: number;
+    dynamicContentSizeValue: number;
 
     fontOptions: FontOption[] = ['Random', 'Normal', 'Mr. Saturn Boing', 'Lumine Hall'];
     fontOption: FontOption;
 
-    // motivationMinutesInputValue: string;
-    // motivationDurationInputValue: string;
     additionalSaturnsValue: string;
     loopCountInputValue: string;
     saturnsLimitInputValue: string;
@@ -56,7 +56,11 @@ export class ConfigComponent implements OnInit {
                 loopCount: doc.loopCount || 0,
                 saturnsLimit: doc.saturnsLimit || 0,
                 jumpScareTimestamp: doc.jumpScareTimestamp || 0,
+                volume: doc.volume ?? 1,
+                dynamicContentSize: doc.dynamicContentSize ?? 1,
             };
+
+            console.log(this.settings);
 
             if (this.settings.font === 'random') {
                 this.fontOption = 'Random';
@@ -70,6 +74,9 @@ export class ConfigComponent implements OnInit {
 
             this.loopCountInputValue = "" + (this.settings.loopCount || 0);
             this.saturnsLimitInputValue = "" + (this.settings.saturnsLimit || 0);
+
+            this.volumeStepperValue = (this.settings.volume || 0) * 10;
+            this.dynamicContentSizeValue = (this.settings.dynamicContentSize || 0) * 100;
         });
     }
 
@@ -215,6 +222,22 @@ export class ConfigComponent implements OnInit {
         console.log(event);
 
         this.settings.loopRandomSprites = !!event.checked;
+    }
+
+    updateVolume(event: MatSliderChange) {
+        console.log(event);
+        this.volumeStepperValue = event.value;
+        this.settings.volume = event.value / 10;
+
+        console.log(this.volumeStepperValue, this.settings.volume);
+    }
+    
+    updateDynamicContentSize(event: MatSliderChange) {
+        console.log(event);
+        this.dynamicContentSizeValue = event.value;
+        this.settings.dynamicContentSize = event.value / 100;
+
+        console.log(this.dynamicContentSizeValue, this.settings.dynamicContentSize);
     }
 
     public save() {
