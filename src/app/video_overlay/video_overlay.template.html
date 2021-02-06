@@ -1,19 +1,18 @@
 <audio #cheer src="assets/sfx/kids_cheering.mp3" type="audio/mpeg"></audio>
 
 <div id="box" [class]="dark ? 'dark-theme' : ''" #the_box>
-    <iframe *ngIf="iframeSrc" [src]="iframeSrc">
+    
 
-    </iframe>
+    <div *ngIf="imgSrc || iframeSrc" class="dynamic-content-container">
+        <iframe *ngIf="iframeSrc" [src]="iframeSrc" [style.height]="'' + (settings?.dynamicContentSize * 100) + 'vh'"  [style.width]="'' + (settings?.dynamicContentSize * 100) + 'vw'"></iframe>
 
-    <div *ngIf="imgSrc" class="img-container">
-        <img [src]="imgSrc" class="responsive-image">
+        <img [src]="imgSrc" class="responsive-image" [style.height]="'' + (settings?.dynamicContentSize * 100) + 'vh'">
     </div>
 
     <milk-man [active]="activeMilkMan"></milk-man>
     <mona-lisa #monaLisa></mona-lisa>
 
     <olives #olives [maxWidth]="the_box.offsetWidth" [maxHeight]="the_box.offsetHeight"></olives>
-
 
     <moo-msg *ngFor="let msg of msgs" [msg]="msg" [box]="box" (destroyMsg)="removeMsg(msg)"></moo-msg>
 

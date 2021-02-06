@@ -267,8 +267,8 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
                     jumpScareTimestamp: doc.jumpScareTimestamp || 0,
 
-                    volume: 0,
-                    dynamicContentSize: 1,
+                    volume: doc.volume ?? 1,
+                    dynamicContentSize: doc.dynamicContentSize ?? 1,
                 };
 
                 if (doc.loopCount) {
@@ -343,12 +343,12 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 this.imgSrc = undefined;
 
-                clearTimeout(this.uploadClearTimeout);
+                // clearTimeout(this.uploadClearTimeout);
 
-                this.uploadClearTimeout = window.setTimeout(() => {
-                    this.imgSrc = undefined;
-                    this.iframeSrc = undefined;
-                }, 10 * 1000);
+                // this.uploadClearTimeout = window.setTimeout(() => {
+                //     this.imgSrc = undefined;
+                //     this.iframeSrc = undefined;
+                // }, 20 * 1000);
                 
                 return;
             }
@@ -364,14 +364,13 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 this.iframeSrc = undefined;
 
-                clearTimeout(this.uploadClearTimeout);
+                // clearTimeout(this.uploadClearTimeout);
 
-                this.uploadClearTimeout = window.setTimeout(() => {
-                    this.imgSrc = undefined;
-                    this.iframeSrc = undefined;
-                }, 10 * 1000);
+                // this.uploadClearTimeout = window.setTimeout(() => {
+                //     this.imgSrc = undefined;
+                //     this.iframeSrc = undefined;
+                // }, 20 * 1000);
 
-                
                 return;
             }
 
