@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --progress --open",
+    "start": "ng serve --open",
     "build": "ng build -c=production --aot",
     "deploy": "npm run build && firebase deploy",
     "test": "ng test",
@@ -30,7 +30,6 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1101.4",
-    "@angular-devkit/core": "^11.1.4",
     "@angular/cli": "~11.1.4",
     "@angular/compiler-cli": "~11.1.2",
     "@angular/language-service": "~11.1.2",
