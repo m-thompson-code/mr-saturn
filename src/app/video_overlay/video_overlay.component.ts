@@ -189,6 +189,8 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
     mockTwitterContext?: ChatUserstate;
 
+    uploadClearTimeout?: number;
+
     constructor(private domSanitizer: DomSanitizer, private authService: AuthService) {
     }
 
@@ -300,6 +302,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
     // context: ChatUserstate
     public handleCommand(msg: string, context: {mod?: boolean, subscriber?: boolean}): void {
         const _msg = (msg || "").trim().toLowerCase();
+        const _msgRaw = (msg || "").trim();
 
         // const context = doc && doc.context;
         // Handle commands
@@ -320,8 +323,8 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
                 return;
             }
 
-            if (_msg.startsWith('iframe ')) {
-                const _url = _msg.split('iframe ')[1].trim();
+            if (_msgRaw.startsWith('iframe ')) {
+                const _url = _msgRaw.split('iframe ')[1].trim();
 
                 if (!_url || _url === 'clear') {
                     this.iframeSrc = undefined;
@@ -330,12 +333,19 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
 
                 this.imgSrc = undefined;
+
+                clearTimeout(this.uploadClearTimeout);
+
+                this.uploadClearTimeout = window.setTimeout(() => {
+                    this.imgSrc = undefined;
+                    this.iframeSrc = undefined;
+                }, 10 * 1000);
                 
                 return;
             }
 
-            if (_msg.startsWith('img ')) {
-                const _url = _msg.split('img ')[1].trim();
+            if (_msgRaw.startsWith('img ')) {
+                const _url = _msgRaw.split('img ')[1].trim();
 
                 if (!_url || _url === 'clear') {
                     this.imgSrc = undefined;
@@ -345,17 +355,24 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 this.iframeSrc = undefined;
 
+                clearTimeout(this.uploadClearTimeout);
+
+                this.uploadClearTimeout = window.setTimeout(() => {
+                    this.imgSrc = undefined;
+                    this.iframeSrc = undefined;
+                }, 10 * 1000);
+
                 
                 return;
             }
 
-            if (_msg === 'cheer') {
+            if (_msg === 'cheer' || _msg === 'cheers' || _msg === 'cheered') {
                 this.playCheer();
             }
         }
 
         if (context && (context.subscriber || context.mod || context['user-id'] === '36547695')) {
-            if (_msg === 'cheer') {
+            if (_msg === 'cheer' || _msg === 'cheers' || _msg === 'cheered') {
                 this.playCheer();
             }
         }
