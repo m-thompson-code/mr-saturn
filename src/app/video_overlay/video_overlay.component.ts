@@ -153,6 +153,7 @@ export interface SaturnData {
     styleUrls: ['./video_overlay.style.scss']
 })
 export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild("audioEle", {static: false}) audioEle: ElementRef<HTMLAudioElement>;
     @ViewChild("cheer", {static: true}) cheer: ElementRef<HTMLMediaElement>;
 
     @ViewChild('monaLisa') monaLisa: MonaLisaComponent;
@@ -189,6 +190,7 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
     iframeSrc?: SafeUrl;
     imgSrc?: SafeUrl;
+    audioSrc?: SafeUrl;
 
     mockTwitterContext?: ChatUserstate;
 
@@ -332,6 +334,18 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
                 return;
             }
 
+            const clearTimer = 20 * 1000;
+
+            const clearTimerFunc = () => {
+                clearTimeout(this.uploadClearTimeout);
+
+                this.uploadClearTimeout = window.setTimeout(() => {
+                    this.imgSrc = undefined;
+                    this.iframeSrc = undefined;
+                    this.audioSrc = undefined;
+                }, clearTimer);
+            }
+
             if (_msgRaw.startsWith('iframe ')) {
                 const _url = _msgRaw.split('iframe ')[1].trim();
 
@@ -342,13 +356,9 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
 
                 this.imgSrc = undefined;
+                this.audioSrc = undefined;
 
-                // clearTimeout(this.uploadClearTimeout);
-
-                // this.uploadClearTimeout = window.setTimeout(() => {
-                //     this.imgSrc = undefined;
-                //     this.iframeSrc = undefined;
-                // }, 20 * 1000);
+                clearTimerFunc();
                 
                 return;
             }
@@ -363,13 +373,34 @@ export class VideoOverlayComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
 
                 this.iframeSrc = undefined;
+                this.audioSrc = undefined;
 
-                // clearTimeout(this.uploadClearTimeout);
+                clearTimerFunc();
 
-                // this.uploadClearTimeout = window.setTimeout(() => {
-                //     this.imgSrc = undefined;
-                //     this.iframeSrc = undefined;
-                // }, 20 * 1000);
+                return;
+            }
+
+            if (_msgRaw.startsWith('audio ')) {
+                const _url = _msgRaw.split('audio ')[1].trim();
+
+                this.audioSrc = undefined;
+
+                if (!_url || _url === 'clear') {
+                    this.audioSrc = undefined;
+                } else if (this.settings.volume) {
+                    setTimeout(() => {
+                        this.audioSrc = this.domSanitizer.bypassSecurityTrustResourceUrl(_url);
+
+                        setTimeout(() => {
+                            this.audioEle.nativeElement.volume = this.settings.volume;
+                        });
+                    });
+                }
+
+                this.imgSrc = undefined;
+                this.iframeSrc = undefined;
+
+                clearTimerFunc();
 
                 return;
             }
