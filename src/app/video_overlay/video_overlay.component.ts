@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import { MonaLisaComponent } from './mona_lisa/mona_lisa.component';
 import { OlivesComponent } from './olives/olives.component';
 

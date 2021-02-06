@@ -30,7 +30,7 @@ import { MonaLisaComponent } from './video_overlay/mona_lisa/mona_lisa.component
 import { OlivesComponent } from './video_overlay/olives/olives.component';
 import { OliveComponent } from './video_overlay/olives/olive/olive.component';
 
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 
 import "firebase/firestore";
 import "firebase/auth";

@@ -1,5 +1,5 @@
 import { Component, NgZone } from '@angular/core';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import { AuthService } from './auth.service';
 
 @Component({
